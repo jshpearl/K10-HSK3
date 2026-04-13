@@ -1,7 +1,7 @@
 import streamlit as st
 import random
 
-# --- 1. KHO DỮ LIỆU TỔNG HỢP 150 TỪ ---
+# --- 1. KHO DỮ LIỆU TỔNG HỢP 150 TỪ (6 NHÓM) ---
 vocab_db = [
     # Nhóm 1
     {"h": "熊猫", "p": "xióngmāo", "m": "Gấu trúc"},
@@ -159,15 +159,15 @@ vocab_db = [
 ]
 
 # --- 2. CẤU HÌNH GIAO DIỆN ---
-st.set_page_config(page_title="HSK 3 - Master Quiz 150", page_icon="🎓")
+st.set_page_config(page_title="K10 ÔN TỪ VỰNG HSK3", page_icon="🎓")
 st.markdown("<style>header {visibility: hidden;} footer {visibility: hidden;}</style>", unsafe_allow_html=True)
 
 # --- 3. QUẢN LÝ TRẠNG THÁI ---
 if 'master_questions' not in st.session_state:
-    sampled = random.sample(vocab_db, 20) # Mỗi lượt bốc 20 từ ngẫu nhiên
+    sampled = random.sample(vocab_db, 20) 
     questions = []
     for item in sampled:
-        mode = random.choice(['p', 'm']) # Ngẫu nhiên hỏi Phiên âm hay Nghĩa
+        mode = random.choice(['p', 'm'])
         if mode == 'p':
             q_text = f"Phiên âm của từ '{item['h']}' là gì?"
             correct = item['p']
@@ -190,8 +190,8 @@ if 'master_questions' not in st.session_state:
 
 # --- 4. HIỂN THỊ CÂU HỎI ---
 if not st.session_state.quiz_done:
-    st.title("🚀 Thử thách 150 từ vựng HSK 3")
-    st.write("Học xong không lo quên! Làm bộ đề ngẫu nhiên 20 câu mỗi ngày.")
+    st.title("🎓 K10 ÔN TỪ VỰNG HSK3")
+    st.markdown("### Mỗi lần vào là ngẫu nhiên ôn ngẫu nhiên 20 từ vựng, vào ôn thường xuyên nhé cả lớp~")
     
     idx = st.session_state.current_idx
     q = st.session_state.master_questions[idx]
