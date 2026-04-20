@@ -1,9 +1,9 @@
 import streamlit as st
 import random
 
-# --- 1. KHO DỮ LIỆU TỔNG HỢP 175 TỪ (7 NHÓM X 25 TỪ) ---
+# --- 1. KHO DỮ LIỆU TỔNG HỢP 250 TỪ (10 NHÓM X 25 TỪ) ---
 vocab_db = [
-    # NHÓM 1
+    # NHÓM 1 - 7 (Dữ liệu cũ của cô)
     {"h": "熊猫", "p": "xióngmāo", "m": "Gấu trúc"}, {"h": "刚才", "p": "gāngcái", "m": "Vừa nãy"},
     {"h": "蓝", "p": "lán", "m": "Màu xanh da trời"}, {"h": "终于", "p": "zhōngyú", "m": "Cuối cùng thì"},
     {"h": "简单", "p": "jiǎndān", "m": "Đơn giản"}, {"h": "礼物", "p": "lǐwù", "m": "Quà tặng"},
@@ -17,8 +17,6 @@ vocab_db = [
     {"h": "经常", "p": "jīngcháng", "m": "Thường xuyên"}, {"h": "解决", "p": "jiějué", "m": "Giải quyết"},
     {"h": "借", "p": "jiè", "m": "Mượn/Vay"}, {"h": "决定", "p": "juédìng", "m": "Quyết định"},
     {"h": "可爱", "p": "kě'ài", "m": "Đáng yêu"},
-    
-    # NHÓM 2
     {"h": "阿姨", "p": "āyí", "m": "Dì/Cô"}, {"h": "突然", "p": "tūrán", "m": "Đột nhiên"},
     {"h": "干净", "p": "gānjìng", "m": "Sạch sẽ"}, {"h": "明白", "p": "míngbai", "m": "Hiểu/Rõ ràng"},
     {"h": "胖", "p": "pàng", "m": "Béo"}, {"h": "相信", "p": "xiāngxìn", "m": "Tin tưởng"},
@@ -32,8 +30,6 @@ vocab_db = [
     {"h": "总是", "p": "zǒngshì", "m": "Luôn luôn"}, {"h": "担心", "p": "dānxīn", "m": "Lo lắng"},
     {"h": "举行", "p": "jǔxíng", "m": "Tổ chức/Cử hành"}, {"h": "世界", "p": "shìjiè", "m": "Thế giới"},
     {"h": "准备", "p": "zhǔnbèi", "m": "Chuẩn bị"},
-
-    # NHÓM 3
     {"h": "草", "p": "cǎo", "m": "Cỏ"}, {"h": "层", "p": "céng", "m": "Tầng/Lớp"},
     {"h": "差", "p": "chà", "m": "Kém/Tồi"}, {"h": "声音", "p": "shēngyīn", "m": "Âm thanh/Tiếng nói"},
     {"h": "衬衫", "p": "chènshān", "m": "Áo sơ mi"}, {"h": "成绩", "p": "chéngjì", "m": "Thành tích/Kết quả"},
@@ -47,8 +43,6 @@ vocab_db = [
     {"h": "电梯", "p": "diàntī", "m": "Thang máy"}, {"h": "电子邮件", "p": "diànzǐ yóujiàn", "m": "Email"},
     {"h": "东", "p": "dōng", "m": "Phía Đông"}, {"h": "冬", "p": "dōng", "m": "Mùa đông"},
     {"h": "放", "p": "fàng", "m": "Đặt/Để/Thả"},
-
-    # NHÓM 4
     {"h": "动物", "p": "dòngwù", "m": "Động vật"}, {"h": "短", "p": "duǎn", "m": "Ngắn"},
     {"h": "段", "p": "duàn", "m": "Đoạn/Khoảng"}, {"h": "锻炼", "p": "duànliàn", "m": "Tập thể dục/Rèn luyện"},
     {"h": "多么", "p": "duōme", "m": "Biết bao nhiêu"}, {"h": "饿", "p": "è", "m": "Đói"},
@@ -62,8 +56,6 @@ vocab_db = [
     {"h": "公园", "p": "gōngyuán", "m": "Công viên"}, {"h": "关", "p": "guān", "m": "Đóng/Tắt"},
     {"h": "关系", "p": "guānxi", "m": "Quan hệ/Liên quan"}, {"h": "关心", "p": "guānxīn", "m": "Quan tâm"},
     {"h": "关于", "p": "guānyú", "m": "Về/Liên quan đến"},
-
-    # NHÓM 5
     {"h": "国家", "p": "guójiā", "m": "Quốc gia"}, {"h": "果汁", "p": "guǒzhī", "m": "Nước trái cây"},
     {"h": "过去", "p": "guòqù", "m": "Quá khứ/Trước đây"}, {"h": "害怕", "p": "hàipà", "m": "Sợ hãi"},
     {"h": "航班", "p": "hángbān", "m": "Chuyến bay"}, {"h": "黑板", "p": "hēibǎn", "m": "Bảng đen"},
@@ -77,23 +69,11 @@ vocab_db = [
     {"h": "健康", "p": "jiànkāng", "m": "Khỏe mạnh"}, {"h": "讲", "p": "jiǎng", "m": "Nói/Giảng/Kể"},
     {"h": "角", "p": "jiǎo", "m": "Hào (tiền tệ)"}, {"h": "脚", "p": "jiǎo", "m": "Bàn chân"},
     {"h": "接", "p": "jiē", "m": "Đón/Nhận (điện thoại)"},
-
-    # NHÓM 6
-    {"h": "街道", "p": "jiēdào", "m": "Đường phố"}, {"h": "节目", "p": "jiémù", "m": "Chương trình/Tiết mục"},
-    {"h": "节日", "p": "jiérì", "m": "Ngày lễ"}, {"h": "结束", "p": "jiéshù", "m": "Kết thúc"},
-    {"h": "久", "p": "jiǔ", "m": "Lâu (thời gian)"}, {"h": "旧", "p": "jiù", "m": "Cũ"},
-    {"h": "句子", "p": "jùzi", "m": "Câu văn"}, {"h": "渴", "p": "kě", "m": "Khát"},
-    {"h": "刻", "p": "kè", "m": "Khắc (15 phút)"}, {"h": "客人", "p": "kèrén", "m": "Khách"},
-    {"h": "空调", "p": "kōngtiáo", "m": "Điều hòa"}, {"h": "口", "p": "kǒu", "m": "Nhân khẩu/Miệng"},
-    {"h": "哭", "p": "kū", "m": "Khóc"}, {"h": "裤子", "p": "kùzi", "m": "Cái quần"},
-    {"h": "筷子", "p": "kuàizi", "m": "Đôi đũa"}, {"h": "老", "p": "lǎo", "m": "Già/Cũ"},
     {"h": "离开", "p": "líkāi", "m": "Rời khỏi"}, {"h": "脸", "p": "liǎn", "m": "Khuôn mặt"},
     {"h": "辆", "p": "liàng", "m": "Chiếc/Cái (xe)"}, {"h": "聊天", "p": "liáotiān", "m": "Tán gẫu"},
     {"h": "了解", "p": "liǎojiě", "m": "Hiểu rõ"}, {"h": "邻居", "p": "línjū", "m": "Hàng xóm"},
     {"h": "留学", "p": "liúxué", "m": "Du học"}, {"h": "楼", "p": "lóu", "m": "Tòa nhà/Tầng"},
     {"h": "绿", "p": "lǜ", "m": "Màu xanh lá cây"},
-
-    # NHÓM 7
     {"h": "马", "p": "mǎ", "m": "Con ngựa"}, {"h": "满意", "p": "mǎnyì", "m": "Hài lòng"},
     {"h": "帽子", "p": "màozi", "m": "Cái mũ"}, {"h": "米", "p": "mǐ", "m": "Gạo/Mét"},
     {"h": "面包", "p": "miànbāo", "m": "Bánh mì"}, {"h": "面条", "p": "miàntiáo", "m": "Mì sợi"},
@@ -104,13 +84,58 @@ vocab_db = [
     {"h": "努力", "p": "nǔlì", "m": "Nỗ lực"}, {"h": "爬山", "p": "páshān", "m": "Leo núi"},
     {"h": "盘子", "p": "pánzi", "m": "Cái đĩa"}, {"h": "啤酒", "p": "píjiǔ", "m": "Bia"},
     {"h": "便宜", "p": "piányi", "m": "Rẻ"}, {"h": "票", "p": "piào", "m": "Vé"},
-    {"h": "普通话", "p": "pǔtōnghuà", "m": "Tiếng phổ thông"}, {"h": "骑", "p": "qí", "m": "Cưỡi (ngựa)/Đi (xe đạp)"},
+    {"h": "普通话", "p": "pǔtōnghuà", "m": "Tiếng phổ thông"}, {"h": "骑", "p": "qí", "m": "Cưỡi/Đi (xe)"},
     {"h": "其实", "p": "qíshí", "m": "Thực ra"}, {"h": "其他", "p": "qítā", "m": "Cái khác/Người khác"},
     {"h": "起飞", "p": "qǐfēi", "m": "Cất cánh"},
+
+    # --- NHÓM 8 ---
+    {"h": "起来", "p": "qǐlái", "m": "Dậy/Đứng dậy"}, {"h": "清楚", "p": "qīngchu", "m": "Rõ ràng"},
+    {"h": "请假", "p": "qǐngjià", "m": "Xin nghỉ"}, {"h": "秋", "p": "qiū", "m": "Mùa thu"},
+    {"h": "裙子", "p": "qúnzi", "m": "Cái váy"}, {"h": "然后", "p": "ránhòu", "m": "Sau đó"},
+    {"h": "认为", "p": "rènwéi", "m": "Cho rằng"}, {"h": "认真", "p": "rènzhēn", "m": "Chăm chỉ/Nghiêm túc"},
+    {"h": "容易", "p": "róngyì", "m": "Dễ dàng"}, {"h": "如果", "p": "rúguǒ", "m": "Nếu"},
+    {"h": "伞", "p": "sǎn", "m": "Cái ô/dù"}, {"h": "上网", "p": "shàngwǎng", "m": "Lên mạng"},
+    {"h": "世界", "p": "shìjiè", "m": "Thế giới"}, {"h": "试", "p": "shì", "m": "Thử"},
+    {"h": "瘦", "p": "shòu", "m": "Gầy"}, {"h": "叔叔", "p": "shūshu", "m": "Chú"},
+    {"h": "树", "p": "shù", "m": "Cái cây"}, {"h": "数学", "p": "shùxué", "m": "Toán học"},
+    {"h": "刷牙", "p": "shuāyá", "m": "Đánh răng"}, {"h": "双", "p": "shuāng", "m": "Đôi/Cặp"},
+    {"h": "水平", "p": "shuǐpíng", "m": "Trình độ"}, {"h": "司机", "p": "sījī", "m": "Tài xế"},
+    {"h": "虽然", "p": "suīrán", "m": "Mặc dù"}, {"h": "糖", "p": "táng", "m": "Kẹo/Đường"},
+    {"h": "疼", "p": "téng", "m": "Đau"},
+
+    # --- NHÓM 9 ---
+    {"h": "提高", "p": "tígāo", "m": "Nâng cao"}, {"h": "体育", "p": "tǐyù", "m": "Thể dục/Thể thao"},
+    {"h": "甜", "p": "tián", "m": "Ngọt"}, {"h": "条", "p": "tiáo", "m": "Lượng từ (vật dài)"},
+    {"h": "同意", "p": "tóngyì", "m": "Đồng ý"}, {"h": "图书馆", "p": "túshūguǎn", "m": "Thư viện"},
+    {"h": "腿", "p": "tuǐ", "m": "Cái chân"}, {"h": "完成", "p": "wánchéng", "m": "Hoàn thành"},
+    {"h": "碗", "p": "wǎn", "m": "Cái bát"}, {"h": "万", "p": "wàn", "m": "Vạn (10.000)"},
+    {"h": "忘记", "p": "wàngjì", "m": "Quên"}, {"h": "为", "p": "wèi", "m": "Vì"},
+    {"h": "为了", "p": "wèile", "m": "Vì để"}, {"h": "位", "p": "wèi", "m": "Lượng từ (người)"},
+    {"h": "文化", "p": "wénhuà", "m": "Văn hóa"}, {"h": "习惯", "p": "xíguàn", "m": "Thói quen"},
+    {"h": "洗澡", "p": "xǐzǎo", "m": "Tắm"}, {"h": "夏", "p": "xià", "m": "Mùa hè"},
+    {"h": "先", "p": "xiān", "m": "Trước"}, {"h": "香蕉", "p": "xiāngjiāo", "m": "Quả chuối"},
+    {"h": "向", "p": "xiàng", "m": "Về hướng"}, {"h": "像", "p": "xiàng", "m": "Giống"},
+    {"h": "小心", "p": "xiǎoxīn", "m": "Cẩn thận"}, {"h": "校长", "p": "xiàozhǎng", "m": "Hiệu trưởng"},
+    {"h": "鞋", "p": "xié", "m": "Cái giày"},
+
+    # --- NHÓM 10 ---
+    {"h": "新闻", "p": "xīnwén", "m": "Tin tức"}, {"h": "新鲜", "p": "xīnxiān", "m": "Tươi mới"},
+    {"h": "信", "p": "xìn", "m": "Bức thư"}, {"h": "行李箱", "p": "xínglǐxiāng", "m": "Va li"},
+    {"h": "兴趣", "p": "xìngqù", "m": "Hứng thú"}, {"h": "熊猫", "p": "xióngmāo", "m": "Gấu trúc"},
+    {"h": "修", "p": "xiū", "m": "Sửa"}, {"h": "需要", "p": "xūyào", "m": "Cần"},
+    {"h": "选择", "p": "xuǎnzé", "m": "Lựa chọn"}, {"h": "眼镜", "p": "yǎnjìng", "m": "Cái kính"},
+    {"h": "眼睛", "p": "yǎnjing", "m": "Đôi mắt"}, {"h": "羊肉", "p": "yángròu", "m": "Thịt dê"},
+    {"h": "阳光", "p": "yángguāng", "m": "Ánh nắng"}, {"h": "样子", "p": "yàngzi", "m": "Dáng vẻ"},
+    {"h": "要求", "p": "yāoqiú", "m": "Yêu cầu"}, {"h": "药", "p": "yào", "m": "Thuốc"},
+    {"h": "爷爷", "p": "yéye", "m": "Ông nội"}, {"h": "一般", "p": "yìbān", "m": "Bình thường"},
+    {"h": "一样", "p": "yíyàng", "m": "Giống nhau"}, {"h": "一直", "p": "yìzhí", "m": "Luôn luôn"},
+    {"h": "以为", "p": "yǐwéi", "m": "Tưởng rằng"}, {"h": "已经", "p": "yǐjīng", "m": "Đã"},
+    {"h": "音乐", "p": "yīnyuè", "m": "Âm nhạc"}, {"h": "银行", "p": "yínháng", "m": "Ngân hàng"},
+    {"h": "应该", "p": "yīnggāi", "m": "Nên"},
 ]
 
 # --- 2. CẤU HÌNH GIAO DIỆN ---
-st.set_page_config(page_title="K10 - LUYỆN TẬP 175 TỪ HSK3", page_icon="📝")
+st.set_page_config(page_title="K10 - LUYỆN TẬP 250 TỪ HSK3", page_icon="📝")
 st.markdown("<style>header {visibility: hidden;} footer {visibility: hidden;}</style>", unsafe_allow_html=True)
 
 # --- 3. QUẢN LÝ TRẠNG THÁI (SESSION STATE) ---
@@ -118,10 +143,10 @@ if 'used_last_round' not in st.session_state:
     st.session_state.used_last_round = []
 
 if 'master_questions' not in st.session_state:
-    # Lọc bỏ 20 từ vừa làm ở hiệp trước
+    # Lọc bỏ từ đã làm ở hiệp trước
     available = [v for v in vocab_db if v['h'] not in st.session_state.used_last_round]
     
-    # Nếu làm gần hết kho từ rồi thì reset lại kho
+    # Reset nếu hết từ mới
     if len(available) < 20:
         available = vocab_db
         
@@ -129,23 +154,19 @@ if 'master_questions' not in st.session_state:
     questions = []
     
     for item in sampled:
-        # Ngẫu nhiên chọn kiểu hỏi: 'p' (hỏi phiên âm) hoặc 'm' (hỏi nghĩa)
         mode = random.choice(['p', 'm'])
-        
         if mode == 'p':
             q_text = f"Phiên âm của từ '{item['h']}' là gì?"
             correct = item['p']
-            # Lấy 3 đáp án sai cùng loại (phiên âm) từ toàn bộ kho từ
             others = list(set([v['p'] for v in vocab_db if v['p'] != correct]))
         else:
             q_text = f"Nghĩa của từ '{item['h']}' là gì?"
             correct = item['m']
-            # Lấy 3 đáp án sai cùng loại (nghĩa) từ toàn bộ kho từ
             others = list(set([v['m'] for v in vocab_db if v['m'] != correct]))
             
         distractors = random.sample(others, 3)
         options = distractors + [correct]
-        random.shuffle(options) # Đảo lộn vị trí A, B, C, D
+        random.shuffle(options)
         
         questions.append({
             "q": q_text, 
@@ -163,18 +184,16 @@ if 'master_questions' not in st.session_state:
 
 # --- 4. HIỂN THỊ CÂU HỎI ---
 if not st.session_state.quiz_done:
-    st.title("🎓 K10 ÔN TẬP 175 TỪ VỰNG HSK3")
-    st.info("Mỗi hiệp 20 từ ngẫu nhiên. Làm xong hiệp này, hiệp sau sẽ là 20 từ khác!")
+    st.title("🎓 K10 ÔN TẬP 250 TỪ VỰNG HSK3")
+    st.info(f"Tổng kho: 250 từ. Mỗi hiệp 20 từ. Hiệp sau né từ hiệp trước!")
     
     idx = st.session_state.current_idx
     q = st.session_state.master_questions[idx]
     
-    # Thanh tiến trình
     st.progress(idx / 20)
     st.subheader(f"Câu {idx+1}/20")
     st.markdown(f"### {q['q']}")
     
-    # Đáp án đảo lộn
     choice = st.radio("Chọn đáp án của bạn:", q['options'], key=f"q_{idx}")
     
     if st.button("Câu tiếp theo ➡️"):
@@ -190,17 +209,12 @@ if not st.session_state.quiz_done:
             st.rerun()
 
 else:
-    # --- 5. MÀN HÌNH KẾT QUẢ ---
     st.balloons()
     st.header("HOÀN THÀNH BÀI ÔN TẬP! 🎉")
     st.metric("Điểm số của bạn", f"{st.session_state.score}/20")
     
-    # Nút làm hiệp mới (Né từ cũ)
-    if st.button("Làm 20 câu mới (Không trùng câu cũ) 🔄"):
-        # Lưu danh sách từ vừa thi xong để hiệp sau tránh ra
+    if st.button("Làm 20 câu mới (Né câu cũ) 🔄"):
         st.session_state.used_last_round = [q['word'] for q in st.session_state.master_questions]
-        
-        # Xóa các biến hiệp này để máy tính tự bốc hiệp mới
         del st.session_state.master_questions
         del st.session_state.current_idx
         del st.session_state.score
