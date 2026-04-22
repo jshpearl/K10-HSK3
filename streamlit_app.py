@@ -1,8 +1,7 @@
 import streamlit as st
 import random
 
-# --- 1. KHO DỮ LIỆU TỔNG HỢP 250 TỪ (10 NHÓM) ---
-# Tớ gộp gọn danh sách lại để cô dễ nhìn, dữ liệu bên trong vẫn đầy đủ 250 từ
+# --- 1. KHO DỮ LIỆU TỔNG HỢP 275 TỪ (11 NHÓM) ---
 vocab_db = [
     # Nhóm 1-7
     {"h": "熊猫", "p": "xióngmāo", "m": "Gấu trúc"}, {"h": "刚才", "p": "gāngcái", "m": "Vừa nãy"},
@@ -89,7 +88,7 @@ vocab_db = [
     {"h": "其实", "p": "qíshí", "m": "Thực ra"}, {"h": "其他", "p": "qítā", "m": "Cái khác/Người khác"},
     {"h": "起飞", "p": "qǐfēi", "m": "Cất cánh"},
 
-    # Nhóm 8-10 (Mới bổ sung)
+    # Nhóm 8-10 
     {"h": "起来", "p": "qǐlái", "m": "Dậy/Đứng dậy"}, {"h": "清楚", "p": "qīngchu", "m": "Rõ ràng"},
     {"h": "请假", "p": "qǐngjià", "m": "Xin nghỉ"}, {"h": "秋", "p": "qiū", "m": "Mùa thu"},
     {"h": "裙子", "p": "qúnzi", "m": "Cái váy"}, {"h": "然后", "p": "ránhòu", "m": "Sau đó"},
@@ -104,137 +103,4 @@ vocab_db = [
     {"h": "虽然", "p": "suīrán", "m": "Mặc dù"}, {"h": "糖", "p": "táng", "m": "Kẹo/Đường"},
     {"h": "疼", "p": "téng", "m": "Đau"},
     {"h": "提高", "p": "tígāo", "m": "Nâng cao"}, {"h": "体育", "p": "tǐyù", "m": "Thể dục/Thể thao"},
-    {"h": "甜", "p": "tián", "m": "Ngọt"}, {"h": "条", "p": "tiáo", "m": "Lượng từ (vật dài)"},
-    {"h": "同意", "p": "tóngyì", "m": "Đồng ý"}, {"h": "图书馆", "p": "túshūguǎn", "m": "Thư viện"},
-    {"h": "腿", "p": "tuǐ", "m": "Cái chân"}, {"h": "完成", "p": "wánchéng", "m": "Hoàn thành"},
-    {"h": "碗", "p": "wǎn", "m": "Cái bát"}, {"h": "万", "p": "wàn", "m": "Vạn (10.000)"},
-    {"h": "忘记", "p": "wàngjì", "m": "Quên"}, {"h": "为", "p": "wèi", "m": "Vì"},
-    {"h": "为了", "p": "wèile", "m": "Vì để"}, {"h": "位", "p": "wèi", "m": "Lượng từ (người)"},
-    {"h": "文化", "p": "wénhuà", "m": "Văn hóa"}, {"h": "习惯", "p": "xíguàn", "m": "Thói quen"},
-    {"h": "洗澡", "p": "xǐzǎo", "m": "Tắm"}, {"h": "夏", "p": "xià", "m": "Mùa hè"},
-    {"h": "先", "p": "xiān", "m": "Trước"}, {"h": "香蕉", "p": "xiāngjiāo", "m": "Quả chuối"},
-    {"h": "向", "p": "xiàng", "m": "Về hướng"}, {"h": "像", "p": "xiàng", "m": "Giống"},
-    {"h": "小心", "p": "xiǎoxīn", "m": "Cẩn thận"}, {"h": "校长", "p": "xiàozhǎng", "m": "Hiệu trưởng"},
-    {"h": "鞋", "p": "xié", "m": "Cái giày"},
-    {"h": "新闻", "p": "xīnwén", "m": "Tin tức"}, {"h": "新鲜", "p": "xīnxiān", "m": "Tươi mới"},
-    {"h": "信", "p": "xìn", "m": "Bức thư"}, {"h": "行李箱", "p": "xínglǐxiāng", "m": "Va li"},
-    {"h": "兴趣", "p": "xìngqù", "m": "Hứng thú"}, {"h": "熊猫", "p": "xióngmāo", "m": "Gấu trúc"},
-    {"h": "修", "p": "xiū", "m": "Sửa"}, {"h": "需要", "p": "xūyào", "m": "Cần"},
-    {"h": "选择", "p": "xuǎnzé", "m": "Lựa chọn"}, {"h": "眼镜", "p": "yǎnjìng", "m": "Cái kính"},
-    {"h": "眼睛", "p": "yǎnjing", "m": "Đôi mắt"}, {"h": "羊肉", "p": "yángròu", "m": "Thịt dê"},
-    {"h": "阳光", "p": "yángguāng", "m": "Ánh nắng"}, {"h": "样子", "p": "yàngzi", "m": "Dáng vẻ"},
-    {"h": "要求", "p": "yāoqiú", "m": "Yêu cầu"}, {"h": "药", "p": "yào", "m": "Thuốc"},
-    {"h": "爷爷", "p": "yéye", "m": "Ông nội"}, {"h": "一般", "p": "yìbān", "m": "Bình thường"},
-    {"h": "一样", "p": "yíyàng", "m": "Giống nhau"}, {"h": "一直", "p": "yìzhí", "m": "Luôn luôn"},
-    {"h": "以为", "p": "yǐwéi", "m": "Tưởng rằng"}, {"h": "已经", "p": "yǐjīng", "m": "Đã"},
-    {"h": "音乐", "p": "yīnyuè", "m": "Âm nhạc"}, {"h": "银行", "p": "yínháng", "m": "Ngân hàng"},
-    {"h": "应该", "p": "yīnggāi", "m": "Nên"},
-]
-
-# --- 2. CẤU HÌNH GIAO DIỆN ---
-st.set_page_config(page_title="K10 - LUYỆN TẬP 250 TỪ HSK3", page_icon="📝")
-st.markdown("<style>header {visibility: hidden;} footer {visibility: hidden;}</style>", unsafe_allow_html=True)
-
-# --- 3. QUẢN LÝ TRẠNG THÁI (SESSION STATE) ---
-# Dùng session_state.all_used_words để ghi nhớ tất cả từ đã làm trong cả buổi học
-if 'all_used_words' not in st.session_state:
-    st.session_state.all_used_words = []
-
-if 'master_questions' not in st.session_state:
-    # Lọc bỏ TẤT CẢ các từ đã từng xuất hiện từ đầu buổi đến giờ
-    available = [v for v in vocab_db if v['h'] not in st.session_state.all_used_words]
-    
-    # Nếu kho từ mới còn lại ít hơn 20, reset lại toàn bộ để học sinh làm lại từ đầu
-    if len(available) < 20:
-        st.session_state.all_used_words = []
-        available = vocab_db
-        st.warning("🔄 Đã học hết kho từ! Hệ thống sẽ bắt đầu lại từ đầu.")
-        
-    sampled = random.sample(available, 20)
-    
-    # Lưu ngay những từ vừa bốc vào danh sách "đã dùng" để hiệp sau không gặp lại
-    for s in sampled:
-        st.session_state.all_used_words.append(s['h'])
-        
-    questions = []
-    for item in sampled:
-        mode = random.choice(['p', 'm'])
-        if mode == 'p':
-            q_text = f"Phiên âm của từ '{item['h']}' là gì?"
-            correct = item['p']
-            others = list(set([v['p'] for v in vocab_db if v['p'] != correct]))
-        else:
-            q_text = f"Nghĩa của từ '{item['h']}' là gì?"
-            correct = item['m']
-            others = list(set([v['m'] for v in vocab_db if v['m'] != correct]))
-            
-        distractors = random.sample(others, 3)
-        options = distractors + [correct]
-        random.shuffle(options)
-        
-        questions.append({
-            "q": q_text, 
-            "options": options, 
-            "a": correct, 
-            "word": item['h'],
-            "full_info": f"{item['h']} [{item['p']}]: {item['m']}"
-        })
-        
-    st.session_state.master_questions = questions
-    st.session_state.current_idx = 0
-    st.session_state.score = 0
-    st.session_state.user_answers = []
-    st.session_state.quiz_done = False
-
-# --- 4. HIỂN THỊ CÂU HỎI ---
-if not st.session_state.quiz_done:
-    st.title("🎓 K10 ÔN TẬP 250 TỪ VỰNG HSK3")
-    st.info(f"Đã luyện tập: {len(st.session_state.all_used_words)} / 250 từ. Các hiệp tiếp theo sẽ không trùng lặp!")
-    
-    idx = st.session_state.current_idx
-    q = st.session_state.master_questions[idx]
-    
-    st.progress(idx / 20)
-    st.subheader(f"Câu {idx+1}/20")
-    st.markdown(f"### {q['q']}")
-    
-    choice = st.radio("Chọn đáp án của bạn:", q['options'], key=f"q_{idx}")
-    
-    if st.button("Câu tiếp theo ➡️"):
-        st.session_state.user_answers.append(choice)
-        if choice == q['a']:
-            st.session_state.score += 1
-            
-        if idx < 19:
-            st.session_state.current_idx += 1
-            st.rerun()
-        else:
-            st.session_state.quiz_done = True
-            st.rerun()
-
-else:
-    st.balloons()
-    st.header("HOÀN THÀNH BÀI ÔN TẬP! 🎉")
-    st.metric("Điểm số của bạn", f"{st.session_state.score}/20")
-    
-    if st.button("Làm tiếp 20 từ khác (Không trùng từ cũ) 🔄"):
-        # Xóa các biến hiệp hiện tại nhưng GIỮ LẠI all_used_words
-        del st.session_state.master_questions
-        del st.session_state.current_idx
-        del st.session_state.score
-        del st.session_state.user_answers
-        del st.session_state.quiz_done
-        st.rerun()
-
-    st.divider()
-    st.subheader("Xem lại bài làm hiệp này:")
-    for i, q in enumerate(st.session_state.master_questions):
-        user_ans = st.session_state.user_answers[i]
-        is_correct = user_ans == q['a']
-        icon = "✅" if is_correct else "❌"
-        
-        with st.expander(f"{icon} Câu {i+1}: {q['word']}"):
-            st.write(f"**Câu hỏi:** {q['q']}")
-            st.write(f"**Bạn chọn:** {user_ans}")
-            st.write(f"**Đáp án đúng:** {q['a']}")
-            st.info(f"💡 Kiến thức: {q['full_info']}")
+    {"h": "甜", "p": "tián", "m": "Ngọt"}, {"h": "条
