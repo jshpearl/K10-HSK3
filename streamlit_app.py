@@ -1,7 +1,25 @@
 import streamlit as st
 import random
 
-# --- 1. KHO DỮ LIỆU TỔNG HỢP 275 TỪ (11 NHÓM) ---
+# --- DANH SÁCH ẢNH GIF CHÚC MỪNG ---
+gif_urls = [
+    "https://i.pinimg.com/originals/fc/d6/fb/fcd6fb686facbcaf97f4602e6be6e04c.gif",
+    "https://i.pinimg.com/originals/63/fa/7b/63fa7b8ceef65ed89ffefd2a834811ff.gif",
+    "https://i.pinimg.com/originals/24/86/37/248637585fe5c57890aea979eb38bbbf.gif",
+    "https://i.pinimg.com/originals/06/a6/c0/06a6c008c8d9b9f98fdf583373e8d87b.gif",
+    "https://i.pinimg.com/originals/e9/54/8f/e9548f99211cb5a4999a68c0ff6d2862.gif",
+    "https://i.pinimg.com/originals/11/82/59/118259993924863bd3f6457da365e2ac.gif",
+    "https://i.pinimg.com/originals/47/65/fb/4765fbd8b250194051468ec3a0085a12.gif",
+    "https://i.pinimg.com/originals/87/62/b8/8762b8ed3f80980481df7d73afa2fcff.gif",
+    "https://i.pinimg.com/originals/be/62/73/be627352f3f42519bb417efd5556eabf.gif",
+    "https://i.pinimg.com/originals/4a/e1/5a/4ae15a7a77842a2111db77ce3a802114.gif",
+    "https://i.pinimg.com/originals/70/88/dc/7088dcfbb6d5004f62a260264d99ed2d.gif",
+    "https://i.pinimg.com/originals/6b/c6/ed/6bc6edef34fb9e763f12aaf74b25310a.gif",
+    "https://i.pinimg.com/originals/15/41/0f/15410fa493fdaf97e895647a102d9d5c.gif",
+    "https://i.pinimg.com/originals/6f/d1/5a/6fd15a59ca0af6fddf6779ffbf050e82.gif"
+]
+
+# --- 1. KHO DỮ LIỆU TỔNG HỢP 300 TỪ (12 NHÓM) ---
 vocab_db = [
     # --- Nhóm 1 ---
     {"h": "熊猫", "p": "xióngmāo", "m": "Gấu trúc"},
@@ -298,11 +316,38 @@ vocab_db = [
     {"h": "自己", "p": "zìjǐ", "m": "Tự mình / Bản thân"},
     {"h": "嘴", "p": "zuǐ", "m": "Miệng"},
     {"h": "最近", "p": "zuìjìn", "m": "Gần đây"},
-    {"h": "作业", "p": "zuòyè", "m": "Bài tập"}
+    {"h": "作业", "p": "zuòyè", "m": "Bài tập"},
+
+    # --- Nhóm 12 ---
+    {"h": "作用", "p": "zuòyòng", "m": "Tác dụng / Ảnh hưởng"},
+    {"h": "搬", "p": "bān", "m": "Chuyển / Dời / Khiêng"},
+    {"h": "办法", "p": "bànfǎ", "m": "Biện pháp / Cách làm"},
+    {"h": "办公室", "p": "bàngōngshì", "m": "Văn phòng"},
+    {"h": "半", "p": "bàn", "m": "Một nửa / Rưỡi"},
+    {"h": "帮忙", "p": "bāngmáng", "m": "Giúp đỡ"},
+    {"h": "包", "p": "bāo", "m": "Túi / Bao"},
+    {"h": "饱", "p": "bǎo", "m": "No"},
+    {"h": "北方", "p": "běifāng", "m": "Phương Bắc"},
+    {"h": "被", "p": "bèi", "m": "Bị / Được (bị động)"},
+    {"h": "鼻子", "p": "bízi", "m": "Mũi"},
+    {"h": "比较", "p": "bǐjiào", "m": "Khá / Tương đối"},
+    {"h": "比赛", "p": "bǐsài", "m": "Cuộc thi / Thi đấu"},
+    {"h": "笔记本", "p": "bǐjìběn", "m": "Vở ghi chép / Laptop"},
+    {"h": "别人", "p": "biéren", "m": "Người khác"},
+    {"h": "宾馆", "p": "bīnguǎn", "m": "Khách sạn"},
+    {"h": "冰箱", "p": "bīngxiāng", "m": "Tủ lạnh"},
+    {"h": "不但", "p": "búdàn", "m": "Không những"},
+    {"h": "而且", "p": "érqiě", "m": "Mà còn"},
+    {"h": "菜单", "p": "càidān", "m": "Thực đơn"},
+    {"h": "参加", "p": "cānjiā", "m": "Tham gia"},
+    {"h": "超市", "p": "chāoshì", "m": "Siêu thị"},
+    {"h": "刚才", "p": "gāngcái", "m": "Vừa nãy"},
+    {"h": "了解", "p": "liǎojiě", "m": "Hiểu rõ / Tìm hiểu"},
+    {"h": "愿意", "p": "yuànyì", "m": "Bằng lòng / Sẵn sàng"}
 ]
 
 # --- 2. CẤU HÌNH GIAO DIỆN ---
-st.set_page_config(page_title="K10 - LUYỆN TẬP 275 TỪ HSK3", page_icon="📝")
+st.set_page_config(page_title="K10 - LUYỆN TẬP 300 TỪ HSK3", page_icon="📝")
 st.markdown("<style>header {visibility: hidden;} footer {visibility: hidden;}</style>", unsafe_allow_html=True)
 
 # --- 3. QUẢN LÝ TRẠNG THÁI (SESSION STATE) ---
@@ -310,14 +355,16 @@ if 'all_used_words' not in st.session_state:
     st.session_state.all_used_words = []
 
 if 'user_answers' not in st.session_state:
-    # Đổi user_answers thành dạng dictionary để lưu đáp án theo từng câu (hỗ trợ quay lại)
     st.session_state.user_answers = {}
+
+if 'result_gif' not in st.session_state:
+    st.session_state.result_gif = None
 
 if 'master_questions' not in st.session_state:
     # Lọc bỏ TẤT CẢ các từ đã từng xuất hiện
     available = [v for v in vocab_db if v['h'] not in st.session_state.all_used_words]
     
-    # Reset nếu hết kho từ
+    # Reset nếu hết kho từ (hoặc còn ít hơn 20 từ)
     if len(available) < 20:
         st.session_state.all_used_words = []
         available = vocab_db
@@ -340,6 +387,7 @@ if 'master_questions' not in st.session_state:
             correct = item['m']
             others = list(set([v['m'] for v in vocab_db if v['m'] != correct]))
             
+        # Lấy 3 đáp án sai ngẫu nhiên
         distractors = random.sample(others, 3)
         options = distractors + [correct]
         random.shuffle(options)
@@ -357,11 +405,14 @@ if 'master_questions' not in st.session_state:
     st.session_state.score = 0
     st.session_state.user_answers = {}
     st.session_state.quiz_done = False
+    st.session_state.result_gif = None
 
 # --- 4. HIỂN THỊ CÂU HỎI ---
 if not st.session_state.quiz_done:
-    st.title("🎓 K10 ÔN TẬP 275 TỪ VỰNG HSK3")
-    st.info(f"Đã luyện tập: {len(st.session_state.all_used_words)} / 275 từ. Các lần tiếp theo sẽ không trùng lại!")
+    st.title("🎓 K10 ÔN TẬP 300 TỪ VỰNG HSK3")
+    
+    total_unique = len(set([v['h'] for v in vocab_db]))
+    st.info(f"Đã luyện tập: {len(set(st.session_state.all_used_words))} / {total_unique} từ. Các lần tiếp theo sẽ không trùng lại!")
     
     idx = st.session_state.current_idx
     q = st.session_state.master_questions[idx]
@@ -404,11 +455,20 @@ if not st.session_state.quiz_done:
                 
                 st.session_state.score = final_score
                 st.session_state.quiz_done = True
+                
+                # Random chọn 1 ảnh GIF để hiện chúc mừng
+                st.session_state.result_gif = random.choice(gif_urls)
+                
                 st.rerun()
 
 else:
     st.balloons()
     st.header("HOÀN THÀNH BÀI ÔN TẬP! 🎉")
+    
+    # Hiện thị chiếc GIF chúc mừng (Blind Box)
+    if st.session_state.result_gif:
+        st.image(st.session_state.result_gif, width=350)
+    
     st.metric("Điểm số của bạn", f"{st.session_state.score}/20")
     
     if st.button("Làm tiếp 20 từ khác (Không trùng từ cũ) 🔄"):
@@ -417,6 +477,7 @@ else:
         del st.session_state.score
         del st.session_state.user_answers
         del st.session_state.quiz_done
+        del st.session_state.result_gif
         st.rerun()
 
     st.divider()
