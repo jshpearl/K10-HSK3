@@ -1,477 +1,1307 @@
+# -*- coding: utf-8 -*-
 import streamlit as st
-import random
+import requests
+import json
+from datetime import datetime
 
-# --- DANH SÁCH 20 ẢNH GIF CHÚC MỪNG ---
-gif_urls = [
-    "https://i.pinimg.com/originals/fc/d6/fb/fcd6fb686facbcaf97f4602e6be6e04c.gif",
-    "https://i.pinimg.com/originals/63/fa/7b/63fa7b8ceef65ed89ffefd2a834811ff.gif",
-    "https://i.pinimg.com/originals/24/86/37/248637585fe5c57890aea979eb38bbbf.gif",
-    "https://i.pinimg.com/originals/06/a6/c0/06a6c008c8d9b9f98fdf583373e8d87b.gif",
-    "https://i.pinimg.com/originals/e9/54/8f/e9548f99211cb5a4999a68c0ff6d2862.gif",
-    "https://i.pinimg.com/originals/11/82/59/118259993924863bd3f6457da365e2ac.gif",
-    "https://i.pinimg.com/originals/47/65/fb/4765fbd8b250194051468ec3a0085a12.gif",
-    "https://i.pinimg.com/originals/87/62/b8/8762b8ed3f80980481df7d73afa2fcff.gif",
-    "https://i.pinimg.com/originals/be/62/73/be627352f3f42519bb417efd5556eabf.gif",
-    "https://i.pinimg.com/originals/4a/e1/5a/4ae15a7a77842a2111db77ce3a802114.gif",
-    "https://i.pinimg.com/originals/70/88/dc/7088dcfbb6d5004f62a260264d99ed2d.gif",
-    "https://i.pinimg.com/originals/6b/c6/ed/6bc6edef34fb9e763f12aaf74b25310a.gif",
-    "https://i.pinimg.com/originals/15/41/0f/15410fa493fdaf97e895647a102d9d5c.gif",
-    "https://i.pinimg.com/originals/6f/d1/5a/6fd15a59ca0af6fddf6779ffbf050e82.gif",
-    "https://i.pinimg.com/originals/64/04/94/640494359ff11c3f2d030ef92fcdd2f1.gif",
-    "https://i.pinimg.com/originals/f1/52/0a/f1520a5ee03343c567532486a36c3c52.gif",
-    "https://i.pinimg.com/originals/31/e6/54/31e654092894ecfc876acb0afb1e04cb.gif",
-    "https://i.pinimg.com/originals/43/53/d9/4353d9a5aaa49d5c7ec509efff753f86.gif",
-    "https://i.pinimg.com/originals/0e/f2/d2/0ef2d26098ce2477ee7c7ff1042164ce.gif",
-    "https://i.pinimg.com/originals/37/55/2b/37552bf05549d4f67e45a646b586e94b.gif"
-]
+# ==============================================================================
+# HSK4 LUYỆN NGHE PHẦN 2 (2) - STREAMLIT APP
+# ==============================================================================
 
-# --- 1. KHO DỮ LIỆU CHUẨN XÁC 300 TỪ HSK3 (GỘP TỪ FILE PDF + BỔ SUNG TỪ "低") ---
-vocab_db = [
-    {"h": "阿姨", "p": "āyí", "m": "Dì, cô"},
-    {"h": "啊", "p": "a", "m": "A, á (thán từ)"},
-    {"h": "矮", "p": "ǎi", "m": "Thấp"},
-    {"h": "爱好", "p": "àihào", "m": "Sở thích"},
-    {"h": "安静", "p": "ānjìng", "m": "Yên tĩnh"},
-    {"h": "把", "p": "bǎ", "m": "Cây (lượng từ vật có cán) / Câu chữ bǎ"},
-    {"h": "班", "p": "bān", "m": "Lớp"},
-    {"h": "搬", "p": "bān", "m": "Dọn, rời, khiêng"},
-    {"h": "办法", "p": "bànfǎ", "m": "Cách, biện pháp"},
-    {"h": "办公室", "p": "bàngōngshì", "m": "Văn phòng"},
-    {"h": "半", "p": "bàn", "m": "Một nửa, rưỡi"},
-    {"h": "帮忙", "p": "bāngmáng", "m": "Giúp đỡ"},
-    {"h": "包", "p": "bāo", "m": "Cặp, túi"},
-    {"h": "饱", "p": "bǎo", "m": "No"},
-    {"h": "北方", "p": "běifāng", "m": "Miền Bắc"},
-    {"h": "被", "p": "bèi", "m": "Bị, được (bị động)"},
-    {"h": "鼻子", "p": "bízi", "m": "Mũi"},
-    {"h": "比较", "p": "bǐjiào", "m": "Tương đối, khá"},
-    {"h": "比赛", "p": "bǐsài", "m": "Cuộc thi đấu"},
-    {"h": "笔记本", "p": "bǐjìběn", "m": "Máy tính xách tay / Vở"},
-    {"h": "必须", "p": "bìxū", "m": "Cần phải, bắt buộc"},
-    {"h": "变化", "p": "biànhuà", "m": "Thay đổi"},
-    {"h": "别人", "p": "biéren", "m": "Người khác"},
-    {"h": "冰箱", "p": "bīngxiāng", "m": "Tủ lạnh"},
-    {"h": "不但...而且...", "p": "búdàn...érqiě...", "m": "Không những... mà còn"},
-    {"h": "菜单", "p": "càidān", "m": "Thực đơn"},
-    {"h": "参加", "p": "cānjiā", "m": "Tham gia"},
-    {"h": "草", "p": "cǎo", "m": "Cỏ"},
-    {"h": "层", "p": "céng", "m": "Tầng, lớp"},
-    {"h": "差", "p": "chà", "m": "Kém, thiếu"},
-    {"h": "超市", "p": "chāoshì", "m": "Siêu thị"},
-    {"h": "衬衫", "p": "chènshān", "m": "Áo sơ mi"},
-    {"h": "成绩", "p": "chéngjì", "m": "Thành tích"},
-    {"h": "城市", "p": "chéngshì", "m": "Thành phố"},
-    {"h": "迟到", "p": "chídào", "m": "Đến muộn"},
-    {"h": "除了", "p": "chúle", "m": "Ngoài... ra"},
-    {"h": "船", "p": "chuán", "m": "Thuyền, tàu"},
-    {"h": "春天", "p": "chūntiān", "m": "Mùa xuân"},
-    {"h": "词典", "p": "cídiǎn", "m": "Từ điển"},
-    {"h": "聪明", "p": "cōngming", "m": "Thông minh"},
-    {"h": "打扫", "p": "dǎsǎo", "m": "Quét dọn"},
-    {"h": "打算", "p": "dǎsuàn", "m": "Kế hoạch, dự định"},
-    {"h": "带", "p": "dài", "m": "Mang theo"},
-    {"h": "担心", "p": "dānxīn", "m": "Lo lắng"},
-    {"h": "蛋糕", "p": "dàngāo", "m": "Bánh kem"},
-    {"h": "当然", "p": "dāngrán", "m": "Đương nhiên"},
-    {"h": "地", "p": "de", "m": "Trợ từ (sau trạng ngữ)"},
-    {"h": "灯", "p": "dēng", "m": "Đèn"},
-    {"h": "低", "p": "dī", "m": "Thấp"}, 
-    {"h": "地方", "p": "dìfang", "m": "Chỗ, nơi"},
-    {"h": "地铁", "p": "dìtiě", "m": "Tàu điện ngầm"},
-    {"h": "地图", "p": "dìtú", "m": "Bản đồ"},
-    {"h": "电梯", "p": "diàntī", "m": "Thang máy"},
-    {"h": "电子邮件", "p": "diànzǐ yóujiàn", "m": "Email"},
-    {"h": "东", "p": "dōng", "m": "Phía đông"},
-    {"h": "冬天", "p": "dōngtiān", "m": "Mùa đông"},
-    {"h": "动物", "p": "dòngwù", "m": "Động vật"},
-    {"h": "短", "p": "duǎn", "m": "Ngắn"},
-    {"h": "段", "p": "duàn", "m": "Đoạn, khoảng"},
-    {"h": "锻炼", "p": "duànliàn", "m": "Tập thể dục"},
-    {"h": "多么", "p": "duōme", "m": "Biết bao nhiêu"},
-    {"h": "饿", "p": "è", "m": "Đói"},
-    {"h": "耳朵", "p": "ěrduo", "m": "Tai"},
-    {"h": "发", "p": "fā", "m": "Gửi, phát"},
-    {"h": "发烧", "p": "fāshāo", "m": "Sốt"},
-    {"h": "发现", "p": "fāxiàn", "m": "Phát hiện"},
-    {"h": "方便", "p": "fāngbiàn", "m": "Thuận tiện"},
-    {"h": "放", "p": "fàng", "m": "Đặt, để"},
-    {"h": "放心", "p": "fàngxīn", "m": "Yên tâm"},
-    {"h": "分", "p": "fēn", "m": "Phút, xu, điểm"},
-    {"h": "附近", "p": "fùjìn", "m": "Vùng lân cận"},
-    {"h": "复习", "p": "fùxí", "m": "Ôn tập"},
-    {"h": "干净", "p": "gānjìng", "m": "Sạch sẽ"},
-    {"h": "感冒", "p": "gǎnmào", "m": "Bị cảm"},
-    {"h": "感兴趣", "p": "gǎn xìngqù", "m": "Có hứng thú, thích"},
-    {"h": "刚才", "p": "gāngcái", "m": "Lúc nãy"},
-    {"h": "个子", "p": "gèzi", "m": "Vóc dáng"},
-    {"h": "根据", "p": "gēnjù", "m": "Căn cứ vào"},
-    {"h": "跟", "p": "gēn", "m": "Cùng, với"},
-    {"h": "更", "p": "gèng", "m": "Càng, hơn nữa"},
-    {"h": "公斤", "p": "gōngjīn", "m": "Kilogram"},
-    {"h": "公园", "p": "gōngyuán", "m": "Công viên"},
-    {"h": "故事", "p": "gùshi", "m": "Truyện, câu chuyện"},
-    {"h": "刮风", "p": "guāfēng", "m": "Nổi gió"},
-    {"h": "关", "p": "guān", "m": "Đóng, tắt"},
-    {"h": "关系", "p": "guānxi", "m": "Quan hệ"},
-    {"h": "关心", "p": "guānxīn", "m": "Quan tâm"},
-    {"h": "关于", "p": "guānyú", "m": "Về, liên quan đến"},
-    {"h": "国家", "p": "guójiā", "m": "Quốc gia, đất nước"},
-    {"h": "过", "p": "guò", "m": "Trải qua, ăn mừng"},
-    {"h": "过去", "p": "guòqù", "m": "Quá khứ"},
-    {"h": "还是", "p": "háishì", "m": "Hay là"},
-    {"h": "害怕", "p": "hàipà", "m": "Sợ hãi"},
-    {"h": "黑板", "p": "hēibǎn", "m": "Bảng đen"},
-    {"h": "后来", "p": "hòulái", "m": "Sau đó"},
-    {"h": "护照", "p": "hùzhào", "m": "Hộ chiếu"},
-    {"h": "花(n)", "p": "huā", "m": "Hoa"},
-    {"h": "花(v)", "p": "huā", "m": "Tiêu tốn"},
-    {"h": "画", "p": "huà", "m": "Vẽ, bức tranh"},
-    {"h": "坏", "p": "huài", "m": "Hỏng, xấu"},
-    {"h": "欢迎", "p": "huānyíng", "m": "Hoan nghênh"},
-    {"h": "还", "p": "huán", "m": "Trả lại"},
-    {"h": "环境", "p": "huánjìng", "m": "Môi trường"},
-    {"h": "换", "p": "huàn", "m": "Đổi, thay thế"},
-    {"h": "回答", "p": "huídá", "m": "Trả lời"},
-    {"h": "会议", "p": "huìyì", "m": "Hội nghị, cuộc họp"},
-    {"h": "或者", "p": "huòzhě", "m": "Hoặc là"},
-    {"h": "几乎", "p": "jīhū", "m": "Hầu như"},
-    {"h": "机会", "p": "jīhuì", "m": "Cơ hội"},
-    {"h": "极(了)", "p": "jí(le)", "m": "Cực kỳ, hết sức"},
-    {"h": "记得", "p": "jìde", "m": "Nhớ, còn nhớ"},
-    {"h": "季节", "p": "jìjié", "m": "Mùa"},
-    {"h": "检查", "p": "jiǎnchá", "m": "Kiểm tra, khám"},
-    {"h": "简单", "p": "jiǎndān", "m": "Đơn giản"},
-    {"h": "见面", "p": "jiànmiàn", "m": "Gặp mặt"},
-    {"h": "健康", "p": "jiànkāng", "m": "Khỏe mạnh"},
-    {"h": "讲", "p": "jiǎng", "m": "Giải thích, nói"},
-    {"h": "教", "p": "jiāo", "m": "Dạy"},
-    {"h": "角", "p": "jiǎo", "m": "Hào (tiền)"},
-    {"h": "脚", "p": "jiǎo", "m": "Bàn chân"},
-    {"h": "接", "p": "jiē", "m": "Đón"},
-    {"h": "街道", "p": "jiēdào", "m": "Đường phố"},
-    {"h": "节目", "p": "jiémù", "m": "Chương trình"},
-    {"h": "节日", "p": "jiérì", "m": "Ngày lễ"},
-    {"h": "结婚", "p": "jiéhūn", "m": "Kết hôn"},
-    {"h": "结束", "p": "jiéshù", "m": "Kết thúc"},
-    {"h": "解决", "p": "jiějué", "m": "Giải quyết"},
-    {"h": "借", "p": "jiè", "m": "Mượn, vay"},
-    {"h": "经常", "p": "jīngcháng", "m": "Thường xuyên"},
-    {"h": "经过", "p": "jīngguò", "m": "Đi qua"},
-    {"h": "经理", "p": "jīnglǐ", "m": "Giám đốc"},
-    {"h": "久", "p": "jiǔ", "m": "Lâu dài"},
-    {"h": "旧", "p": "jiù", "m": "Cũ"},
-    {"h": "句子", "p": "jùzi", "m": "Câu"},
-    {"h": "决定", "p": "juédìng", "m": "Quyết định"},
-    {"h": "可爱", "p": "kě'ài", "m": "Đáng yêu"},
-    {"h": "渴", "p": "kě", "m": "Khát"},
-    {"h": "刻", "p": "kè", "m": "15 phút, khắc"},
-    {"h": "客人", "p": "kèrén", "m": "Khách"},
-    {"h": "空调", "p": "kōngtiáo", "m": "Điều hòa"},
-    {"h": "口", "p": "kǒu", "m": "Miệng, miếng"},
-    {"h": "哭", "p": "kū", "m": "Khóc"},
-    {"h": "裤子", "p": "kùzi", "m": "Cái quần"},
-    {"h": "筷子", "p": "kuàizi", "m": "Đũa"},
-    {"h": "蓝", "p": "lán", "m": "Màu xanh da trời"},
-    {"h": "老", "p": "lǎo", "m": "Già, cũ"},
-    {"h": "离开", "p": "líkāi", "m": "Rời khỏi"},
-    {"h": "礼物", "p": "lǐwù", "m": "Quà tặng"},
-    {"h": "历史", "p": "lìshǐ", "m": "Lịch sử"},
-    {"h": "脸", "p": "liǎn", "m": "Khuôn mặt"},
-    {"h": "练习", "p": "liànxí", "m": "Luyện tập, bài tập"},
-    {"h": "辆", "p": "liàng", "m": "Chiếc (xe)"},
-    {"h": "聊天(儿)", "p": "liáotiān", "m": "Tán gẫu"},
-    {"h": "了解", "p": "liǎojiě", "m": "Hiểu rõ"},
-    {"h": "邻居", "p": "línjū", "m": "Hàng xóm"},
-    {"h": "留学", "p": "liúxué", "m": "Du học"},
-    {"h": "楼", "p": "lóu", "m": "Tòa nhà, lầu"},
-    {"h": "绿", "p": "lǜ", "m": "Màu xanh lá cây"},
-    {"h": "马", "p": "mǎ", "m": "Con ngựa"},
-    {"h": "马上", "p": "mǎshàng", "m": "Liền, ngay lập tức"},
-    {"h": "满意", "p": "mǎnyì", "m": "Hài lòng"},
-    {"h": "帽子", "p": "màozi", "m": "Cái mũ"},
-    {"h": "米", "p": "mǐ", "m": "Mét, gạo"},
-    {"h": "面包", "p": "miànbāo", "m": "Bánh mì"},
-    {"h": "明白", "p": "míngbai", "m": "Rõ ràng, dễ hiểu"},
-    {"h": "拿", "p": "ná", "m": "Cầm, lấy"},
-    {"h": "奶奶", "p": "nǎinai", "m": "Bà nội"},
-    {"h": "南(方)", "p": "nánfāng", "m": "Phía nam"},
-    {"h": "难", "p": "nán", "m": "Khó"},
-    {"h": "难过", "p": "nánguò", "m": "Buồn"},
-    {"h": "年级", "p": "niánjí", "m": "Lớp (khối)"},
-    {"h": "年轻", "p": "niánqīng", "m": "Trẻ tuổi"},
-    {"h": "鸟", "p": "niǎo", "m": "Con chim"},
-    {"h": "努力", "p": "nǔlì", "m": "Nỗ lực"},
-    {"h": "爬山", "p": "páshān", "m": "Leo núi"},
-    {"h": "盘子", "p": "pánzi", "m": "Cái đĩa"},
-    {"h": "胖", "p": "pàng", "m": "Béo"},
-    {"h": "皮鞋", "p": "píxié", "m": "Giày da"},
-    {"h": "啤酒", "p": "píjiǔ", "m": "Bia"},
-    {"h": "瓶子", "p": "píngzi", "m": "Lọ, bình, chai"},
-    {"h": "其实", "p": "qíshí", "m": "Thực ra"},
-    {"h": "其他", "p": "qítā", "m": "Cái khác"},
-    {"h": "奇怪", "p": "qíguài", "m": "Kỳ lạ"},
-    {"h": "骑", "p": "qí", "m": "Cưỡi, đi"},
-    {"h": "起飞", "p": "qǐfēi", "m": "Cất cánh"},
-    {"h": "起来", "p": "qǐlái", "m": "Lên, đứng dậy"},
-    {"h": "清楚", "p": "qīngchu", "m": "Rõ ràng"},
-    {"h": "请假", "p": "qǐngjià", "m": "Xin nghỉ phép"},
-    {"h": "秋(天)", "p": "qiūtiān", "m": "Mùa thu"},
-    {"h": "裙子", "p": "qúnzi", "m": "Cái váy"},
-    {"h": "然后", "p": "ránhòu", "m": "Sau đó"},
-    {"h": "热情", "p": "rèqíng", "m": "Nhiệt tình"},
-    {"h": "认为", "p": "rènwéi", "m": "Cho rằng"},
-    {"h": "认真", "p": "rènzhēn", "m": "Nghiêm túc"},
-    {"h": "容易", "p": "róngyì", "m": "Dễ"},
-    {"h": "如果", "p": "rúguǒ", "m": "Nếu"},
-    {"h": "伞", "p": "sǎn", "m": "Ô (dù)"},
-    {"h": "上网", "p": "shàngwǎng", "m": "Lên mạng"},
-    {"h": "生气", "p": "shēngqì", "m": "Tức giận"},
-    {"h": "声音", "p": "shēngyīn", "m": "Âm thanh"},
-    {"h": "世界", "p": "shìjiè", "m": "Thế giới"},
-    {"h": "试", "p": "shì", "m": "Thử"},
-    {"h": "瘦", "p": "shòu", "m": "Gầy, còm"},
-    {"h": "叔叔", "p": "shūshu", "m": "Chú"},
-    {"h": "舒服", "p": "shūfu", "m": "Dễ chịu"},
-    {"h": "树", "p": "shù", "m": "Cây"},
-    {"h": "数学", "p": "shùxué", "m": "Môn Toán"},
-    {"h": "刷牙", "p": "shuāyá", "m": "Đánh răng"},
-    {"h": "双", "p": "shuāng", "m": "Đôi"},
-    {"h": "水平", "p": "shuǐpíng", "m": "Trình độ"},
-    {"h": "司机", "p": "sījī", "m": "Tài xế"},
-    {"h": "太阳", "p": "tàiyáng", "m": "Mặt trời"},
-    {"h": "特别", "p": "tèbié", "m": "Vô cùng, đặc biệt"},
-    {"h": "疼", "p": "téng", "m": "Đau, nhức"},
-    {"h": "提高", "p": "tígāo", "m": "Nâng cao"},
-    {"h": "体育", "p": "tǐyù", "m": "Thể dục"},
-    {"h": "甜", "p": "tián", "m": "Ngọt"},
-    {"h": "条", "p": "tiáo", "m": "Cái (vật dài mỏng)"},
-    {"h": "同事", "p": "tóngshì", "m": "Đồng nghiệp"},
-    {"h": "同意", "p": "tóngyì", "m": "Đồng ý"},
-    {"h": "头发", "p": "tóufa", "m": "Tóc"},
-    {"h": "突然", "p": "tūrán", "m": "Bỗng nhiên"},
-    {"h": "图书馆", "p": "túshūguǎn", "m": "Thư viện"},
-    {"h": "腿", "p": "tuǐ", "m": "Chân"},
-    {"h": "完成", "p": "wánchéng", "m": "Hoàn thành"},
-    {"h": "碗", "p": "wǎn", "m": "Bát"},
-    {"h": "万", "p": "wàn", "m": "Vạn"},
-    {"h": "忘记", "p": "wàngjì", "m": "Quên"},
-    {"h": "为", "p": "wèi", "m": "Vì, cho"},
-    {"h": "为了", "p": "wèile", "m": "Để, vì"},
-    {"h": "位", "p": "wèi", "m": "Vị (người)"},
-    {"h": "文化", "p": "wénhuà", "m": "Văn hóa"},
-    {"h": "西", "p": "xī", "m": "Phía tây"},
-    {"h": "习惯", "p": "xíguàn", "m": "Thói quen"},
-    {"h": "洗手间", "p": "xǐshǒujiān", "m": "Nhà vệ sinh"},
-    {"h": "洗澡", "p": "xǐzǎo", "m": "Tắm"},
-    {"h": "夏(天)", "p": "xiàtiān", "m": "Mùa hè"},
-    {"h": "先", "p": "xiān", "m": "Trước"},
-    {"h": "相信", "p": "xiāngxìn", "m": "Tin tưởng"},
-    {"h": "香蕉", "p": "xiāngjiāo", "m": "Chuối"},
-    {"h": "向", "p": "xiàng", "m": "Hướng về"},
-    {"h": "像", "p": "xiàng", "m": "Giống"},
-    {"h": "小心", "p": "xiǎoxīn", "m": "Cẩn thận"},
-    {"h": "校长", "p": "xiàozhǎng", "m": "Hiệu trưởng"},
-    {"h": "新闻", "p": "xīnwén", "m": "Tin tức"},
-    {"h": "新鲜", "p": "xīnxiān", "m": "Tươi mới"},
-    {"h": "信用卡", "p": "xìnyòngkǎ", "m": "Thẻ tín dụng"},
-    {"h": "行李箱", "p": "xínglǐxiāng", "m": "Vali"},
-    {"h": "熊猫", "p": "xióngmāo", "m": "Gấu trúc"},
-    {"h": "需要", "p": "xūyào", "m": "Cần"},
-    {"h": "选择", "p": "xuǎnzé", "m": "Lựa chọn"},
-    {"h": "要求", "p": "yāoqiú", "m": "Yêu cầu"},
-    {"h": "爷爷", "p": "yéye", "m": "Ông nội"},
-    {"h": "一定", "p": "yídìng", "m": "Nhất định"},
-    {"h": "一共", "p": "yígòng", "m": "Tổng cộng"},
-    {"h": "一会儿", "p": "yíhuìr", "m": "Một lát"},
-    {"h": "一样", "p": "yíyàng", "m": "Giống nhau"},
-    {"h": "以前", "p": "yǐqián", "m": "Trước đây"},
-    {"h": "一般", "p": "yìbān", "m": "Thông thường"},
-    {"h": "一边", "p": "yìbiān", "m": "Vừa... vừa"},
-    {"h": "一直", "p": "yìzhí", "m": "Suốt, liên tục"},
-    {"h": "音乐", "p": "yīnyuè", "m": "Âm nhạc"},
-    {"h": "银行", "p": "yínháng", "m": "Ngân hàng"},
-    {"h": "饮料", "p": "yǐnliào", "m": "Đồ uống"},
-    {"h": "应该", "p": "yīnggāi", "m": "Nên"},
-    {"h": "影响", "p": "yǐngxiǎng", "m": "Ảnh hưởng"},
-    {"h": "用", "p": "yòng", "m": "Dùng"},
-    {"h": "游戏", "p": "yóuxì", "m": "Trò chơi"},
-    {"h": "有名", "p": "yǒumíng", "m": "Nổi tiếng"},
-    {"h": "又", "p": "yòu", "m": "Vừa, lại"},
-    {"h": "遇到", "p": "yùdào", "m": "Gặp phải"},
-    {"h": "元", "p": "yuán", "m": "Đồng (tiền)"},
-    {"h": "愿意", "p": "yuànyì", "m": "Muốn, bằng lòng"},
-    {"h": "月亮", "p": "yuèliang", "m": "Mặt trăng"},
-    {"h": "越", "p": "yuè", "m": "Càng"},
-    {"h": "站", "p": "zhàn", "m": "Đứng / Trạm"},
-    {"h": "张", "p": "zhāng", "m": "Tờ, tấm (vật phẳng)"},
-    {"h": "长", "p": "zhǎng", "m": "Trưởng thành, lớn lên"},
-    {"h": "着急", "p": "zháojí", "m": "Lo lắng"},
-    {"h": "照顾", "p": "zhàogù", "m": "Chăm sóc"},
-    {"h": "照片", "p": "zhàopiàn", "m": "Bức ảnh"},
-    {"h": "照相机", "p": "zhàoxiàngjī", "m": "Máy chụp ảnh"},
-    {"h": "只(zhī)", "p": "zhī", "m": "Con (động vật)"},
-    {"h": "只(zhǐ)", "p": "zhǐ", "m": "Chỉ"},
-    {"h": "只有...才", "p": "zhǐyǒu... cái", "m": "Chỉ có... mới..."},
-    {"h": "中间", "p": "zhōngjiān", "m": "Giữa"},
-    {"h": "终于", "p": "zhōngyú", "m": "Cuối cùng"},
-    {"h": "种", "p": "zhǒng", "m": "Loại"},
-    {"h": "重要", "p": "zhòngyào", "m": "Quan trọng"},
-    {"h": "周末", "p": "zhōumò", "m": "Cuối tuần"},
-    {"h": "主要", "p": "zhǔyào", "m": "Chủ yếu"},
-    {"h": "注意", "p": "zhùyì", "m": "Chú ý"},
-    {"h": "自己", "p": "zìjǐ", "m": "Tự mình"},
-    {"h": "自行车", "p": "zìxíngchē", "m": "Xe đạp"},
-    {"h": "总是", "p": "zǒngshì", "m": "Luôn luôn"},
-    {"h": "嘴", "p": "zuǐ", "m": "Miệng"},
-    {"h": "最后", "p": "zuìhòu", "m": "Cuối cùng"},
-    {"h": "最近", "p": "zuìjìn", "m": "Gần đây"},
-    {"h": "作业", "p": "zuòyè", "m": "Bài tập về nhà"},
-    {"h": "黄河", "p": "Huánghé", "m": "Hoàng Hà"}
-]
+# CẤU HÌNH TRANG WEB
+st.set_page_config(
+    page_title="HSK4 LUYỆN NGHE PHẦN 2 (2)",
+    page_icon="🎧",
+    layout="centered",
+    initial_sidebar_state="collapsed"
+)
 
-# --- 2. CẤU HÌNH GIAO DIỆN ---
-st.set_page_config(page_title="K10 - LUYỆN TẬP 300 TỪ HSK3", page_icon="📝")
-st.markdown("<style>header {visibility: hidden;} footer {visibility: hidden;}</style>", unsafe_allow_html=True)
+# CẤU HÌNH LIÊN KẾT WEBHOOK ĐỂ LƯU ĐIỂM VỀ GOOGLE SHEETS
+# Bạn hãy thay thế đường dẫn này bằng link Web App URL lấy từ Google Apps Script
+WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbxfZ7f292zc7Rcq8OdalCQIKl9WDY1fAc21pBMAmXFKr1qnQ3F8FeH-vJqIebuWKQ1U8A/exec"
 
-# --- 3. QUẢN LÝ TRẠNG THÁI (SESSION STATE) ---
-if 'all_used_words' not in st.session_state:
-    st.session_state.all_used_words = []
-
-if 'user_answers' not in st.session_state:
-    st.session_state.user_answers = {}
-
-if 'result_gif' not in st.session_state:
-    st.session_state.result_gif = None
-
-if 'master_questions' not in st.session_state:
-    # Lọc bỏ TẤT CẢ các từ đã từng xuất hiện
-    available = [v for v in vocab_db if v['h'] not in st.session_state.all_used_words]
+# PHONG CÁCH GIAO DIỆN (UI/UX CHẤT LƯỢNG CAO, ĐỘ TƯƠNG PHẢN ĐẬM CỰC RÕ)
+st.markdown("""
+    <style>
+    /* Tổng quan trang */
+    .stApp {
+        background-color: #f8fafc;
+        color: #0f172a;
+    }
     
-    # Reset nếu hết kho từ (hoặc còn ít hơn 20 từ)
-    if len(available) < 20:
-        st.session_state.all_used_words = []
-        available = vocab_db
-        st.warning("🔄 Đã học hết kho từ! Hệ thống sẽ bắt đầu lại từ đầu.")
-        
-    sampled = random.sample(available, 20)
+    /* Ép tất cả các văn bản thông thường, chữ đáp án, chữ radio button hiển thị màu đen đậm */
+    .stApp, .stMarkdown, p, div, span, label, .stRadio label, .stRadio div {
+        color: #0f172a !important;
+        font-weight: 600 !important;
+        font-size: 15px !important;
+    }
     
-    for s in sampled:
-        st.session_state.all_used_words.append(s['h'])
+    /* Thiết kế tiêu đề chính màu xanh navy sang trọng */
+    .header-box {
+        text-align: center;
+        padding: 24px;
+        background-color: #ffffff;
+        border-radius: 16px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        margin-bottom: 25px;
+        border: 2px solid #cbd5e1;
+    }
+    .header-box h1 {
+        color: #1e3b8a !important;
+        font-size: 32px !important;
+        font-weight: 800 !important;
+        margin-bottom: 8px;
+    }
+    .header-box p {
+        font-size: 16px !important;
+        color: #475569 !important;
+        font-weight: 600 !important;
+    }
+    
+    /* Khung nhập tên màu trắng viền xanh nổi bật */
+    .info-box {
+        background-color: #ffffff !important;
+        padding: 24px;
+        border-radius: 16px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        margin-bottom: 25px;
+        border: 3px solid #1e3b8a !important;
+    }
+    .info-box label {
+        color: #1e3b8a !important;
+        font-weight: 700 !important;
+        font-size: 16px !important;
+    }
+    
+    /* Trình phát nhạc chất lượng cao, độ tương phản rõ rệt */
+    .audio-wrapper {
+        background: #f0f6ff !important;
+        padding: 20px;
+        border-radius: 12px;
+        margin-bottom: 15px;
+        border-left: 6px solid #1e3b8a !important;
+        border-right: 1.5px solid #cbd5e1 !important;
+        border-top: 1.5px solid #cbd5e1 !important;
+        border-bottom: 1.5px solid #cbd5e1 !important;
+    }
+    .audio-wrapper h3 {
+        font-size: 16px !important;
+        font-weight: 700 !important;
+        color: #1e3b8a !important;
+    }
+    .audio-wrapper p {
+        font-size: 14px !important;
+        color: #334155 !important;
+        line-height: 1.4 !important;
+    }
+    
+    /* Thẻ câu hỏi viền đậm cực kỳ dễ đọc */
+    .question-card {
+        background-color: #ffffff !important;
+        border: 2.5px solid #94a3b8 !important; /* Viền xám tối rõ ràng */
+        padding: 22px;
+        border-radius: 12px;
+        margin-bottom: 25px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.04);
+    }
+    
+    /* Huy hiệu câu số màu xanh navy đậm */
+    .q-badge {
+        background-color: #1e3b8a !important;
+        color: #ffffff !important;
+        padding: 4px 12px !important;
+        font-size: 14px !important;
+        border-radius: 8px !important;
+        font-weight: 700 !important;
+        display: inline-block;
+        margin-bottom: 12px;
+        box-shadow: 0 2px 4px rgba(30, 58, 138, 0.2);
+    }
+    
+    /* Footer */
+    .footer {
+        text-align: center;
+        margin-top: 50px;
+        padding: 25px;
+        color: #334155 !important;
+        font-size: 16px !important;
+        font-weight: 700 !important;
+        border-top: 2px solid #cbd5e1;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+# TẠO GIAO DIỆN HEADER
+st.markdown("""
+    <div class="header-box">
+        <h1>HSK4 LUYỆN NGHE PHẦN 2 (2)</h1>
+        <p>根据听力内容选择正确答案</p>
+    </div>
+""", unsafe_allow_html=True)
+
+# NHẬP HỌ TÊN HỌC VIÊN
+st.markdown('<div class="info-box">', unsafe_allow_html=True)
+student_name = st.text_input("👤 输入您的姓名 / Nhập họ và tên học viên:", key="student_name", placeholder="请输入姓名...")
+st.markdown('</div>', unsafe_allow_html=True)
+
+# DỮ LIỆU ĐỀ THI
+exam_data = {
+    "DE_16": {
+        "title": "Bộ Đề 16",
+        "audio_id": "1xUQ9THMhYgIkl9TIM0vLMMGdfpIuZYwg",
+        "questions": [
+            {
+                "num": 11,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 借钱",
+                    "B. 卖饼干",
+                    "C. 找钥匙",
+                    "D. 打印文章"
+                ],
+                "correct": "A",
+                "script": "男：我带的钱不够，你能不能先借我一点儿，我明天还你。\n女：没问题。高老师，您要多少？\n问：男的在做什么？"
+            },
+            {
+                "num": 12,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 汤",
+                    "B. 咖啡",
+                    "C. 葡萄酒",
+                    "D. 牛奶糖"
+                ],
+                "correct": "A",
+                "script": "女：这个鸡蛋汤味道怎么样？你尝一下？\n男：我尝了，稍微有点儿咸，是盐放多了吧？\n问：他们在谈什么？"
+            },
+            {
+                "num": 13,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 游泳",
+                    "B. 画画儿",
+                    "C. 上钢琴课",
+                    "D. 打羽毛球"
+                ],
+                "correct": "C",
+                "script": "男：不想去上钢琴课了。\n女：为什么？你不是很喜欢弹钢琴吗？而且还弹得那么好。\n问：男的不想做什么？"
+            },
+            {
+                "num": 14,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 出差",
+                    "B. 爬长城",
+                    "C. 去医院",
+                    "D. 照顾奶奶"
+                ],
+                "correct": "C",
+                "script": "女：经理，打扰您一下，我明天要去趟医院，我想请一天假可以吗？\n男：当然可以，怎么了？身体不舒服？\n问：女的请假要做什么？"
+            },
+            {
+                "num": 15,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 最近很忙",
+                    "B. 可以教他",
+                    "C. 会打网球",
+                    "D. 动作不标准"
+                ],
+                "correct": "B",
+                "script": "男：你乒乓球打得真不错，有时间能教教我吗？\n女：没问题。我每周六都会来体育馆，到时候你来找我就行了。\n问：女的是什么意思？"
+            },
+            {
+                "num": 16,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 寄信",
+                    "B. 别迟到",
+                    "C. 要仔细",
+                    "D. 写总结"
+                ],
+                "correct": "B",
+                "script": "女：明天早上八点半在东门集合，别迟到啊！\n男：放心吧，我一定准时到。\n问：女提醒男的是什么？"
+            },
+            {
+                "num": 17,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 再加一列",
+                    "B. 再算一遍",
+                    "C. 减少字数",
+                    "D. 继续申请"
+                ],
+                "correct": "A",
+                "script": "男：孙小姐，表格我做好了，您看看有什么问题没。\n女：刚才和你说了，还要再加上一列“性别”。\n问：女的要求怎么做？"
+            },
+            {
+                "num": 18,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 口渴",
+                    "B. 坐地铁去",
+                    "C. 放暑假了",
+                    "D. 会踢足球"
+                ],
+                "correct": "B",
+                "script": "男：从这儿到国家图书馆远吗？咱们怎么走？\n女：坐公交车大概得一个多小时，这会儿肯定堵车，我们还是坐地铁吧。\n问：女的是什么意思？"
+            },
+            {
+                "num": 19,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 生气了",
+                    "B. 出汗了",
+                    "C. 没上班",
+                    "D. 没带钥匙"
+                ],
+                "correct": "D",
+                "script": "男：妈，你下班了吗？我没带钥匙。\n女：我很快就到家了，你先在门口等会儿吧。\n问：男怎么了？"
+            },
+            {
+                "num": 20,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 很厚",
+                    "B. 弄坏了",
+                    "C. 收词多",
+                    "D. 能听广播"
+                ],
+                "correct": "C",
+                "script": "女：这两个电子词典样子差不多，左边这个怎么这么贵？\n男：那是新出的，收的词语更丰富，另外，它还有语法解释，所以贵一些。\n问：关于左边的电子词典，下列哪个正确？"
+            },
+            {
+                "num": 21,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 杂志",
+                    "B. 成绩单",
+                    "C. 报名表",
+                    "D. 记事本"
+                ],
+                "correct": "B",
+                "script": "男：喂，姐，我找到你的成绩单了，给你寄过去吗？\n女：你还是发传真吧，我现在就要。\n问：男找到什么了？"
+            },
+            {
+                "num": 22,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 没力气了",
+                    "B. 方向不对",
+                    "C. 完成任务了",
+                    "D. 暂时去不了"
+                ],
+                "correct": "D",
+                "script": "女：听说你寒假要去山西？\n男：是，我本来想放假就走，但恐怕得推迟了，老师让我翻译几篇文章。\n问：男的是什么意思？"
+            },
+            {
+                "num": 23,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 很脏",
+                    "B. 发烧了",
+                    "C. 没精神",
+                    "D. 肚子饿了"
+                ],
+                "correct": "C",
+                "script": "男：小狗是不是生病了？怎么上去精神不太好。\n女：我猜可能是它刚换了新环境，还没有适应，熟悉了就好了。\n问：小狗怎么了？"
+            },
+            {
+                "num": 24,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 还没举行",
+                    "B. 非常热闹",
+                    "C. 让人失望",
+                    "D. 开得很顺利"
+                ],
+                "correct": "A",
+                "script": "女：这次在上海举办的会议，还是你负责，我会再安排两个人帮助你。\n男：好的，经理。\n问：关于会议，可以知道什么？"
+            },
+            {
+                "num": 25,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 吃饱了",
+                    "B. 饺子不咸",
+                    "C. 面包很硬",
+                    "D. 菜不好吃"
+                ],
+                "correct": "B",
+                "script": "男：今天的饺子盐放多了，有点儿咸。\n女：是吗？我觉得正好啊，一点儿也不咸。\n问：女的是什么意思？"
+            }
+        ]
+    },
+    "DE_17": {
+        "title": "Bộ Đề 17",
+        "audio_id": "1gFeLqmVTd70HSPnX4jyM5yPnDSEUrEeI",
+        "questions": [
+            {
+                "num": 11,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 很香",
+                    "B. 不甜",
+                    "C. 太辣",
+                    "D. 有点儿咸"
+                ],
+                "correct": "A",
+                "script": "男：妈，你做的什么菜？好香啊！我尝尝。\n女：别用手拿，去拿筷子。\n问：男觉得菜怎么样？"
+            },
+            {
+                "num": 12,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 想请假",
+                    "B. 被表扬了",
+                    "C. 受到邀请了",
+                    "D. 要写计划书"
+                ],
+                "correct": "D",
+                "script": "女：这次文化节活动由你负责，一定要办得热闹点儿。\n男：好，我们回去就会开会讨论，星期五之前把详细的计划书发给您。\n问：关于男，可以知道什么？"
+            },
+            {
+                "num": 13,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 困了",
+                    "B. 饿了",
+                    "C. 生病了",
+                    "D. 流泪了"
+                ],
+                "correct": "C",
+                "script": "男：你现在感觉怎么样了？好像咳嗽没那么严重了。\n女：好多了，这种感冒药确实有用，头也不怎么疼了。\n问：女怎么了？"
+            },
+            {
+                "num": 14,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 走路",
+                    "B. 坐地铁",
+                    "C. 骑自行车",
+                    "D. 坐出租车"
+                ],
+                "correct": "B",
+                "script": "女：快来不及了，我们打车过去吧？\n男：还是坐地铁吧，这会儿路上恐怕会堵车。\n问：男想怎么去那儿？"
+            },
+            {
+                "num": 15,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 没吃饱",
+                    "B. 要写日记",
+                    "C. 在看电影",
+                    "D. 在看小说"
+                ],
+                "correct": "D",
+                "script": "男：已经两点了，你怎么还不睡觉。\n女：这本小说就剩十几页了，我想看看最后到底怎么样了。\n问：女为什么还不睡？"
+            },
+            {
+                "num": 16,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 中午很冷",
+                    "B. 空调坏了",
+                    "C. 灯不亮了",
+                    "D. 冰箱太旧了"
+                ],
+                "correct": "B",
+                "script": "女：咱们办公室的空调是不是坏了？太热了。\n男：昨天就坏了，一直没人来修，我再打电话问问。\n问：柑橘对话，下列哪个正确？"
+            },
+            {
+                "num": 17,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 800 元",
+                    "B. 160 元",
+                    "C. 640 元",
+                    "D. 600 元"
+                ],
+                "correct": "C",
+                "script": "女：这双鞋多少钱？\n男：原价 800 块钱，现在打八折。\n问：鞋子多少钱一双？"
+            },
+            {
+                "num": 18,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 是他拿照相机",
+                    "B. 很失望",
+                    "C. 很后悔",
+                    "D. 很激动"
+                ],
+                "correct": "B",
+                "script": "女：真的是你拿了小王的照相机吗？\n男：连你也这样认为吗？\n问：根据这段话，可以知道男怎么了？"
+            },
+            {
+                "num": 19,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 认真",
+                    "B. 仔细",
+                    "C. 马虎",
+                    "D. 活泼"
+                ],
+                "correct": "C",
+                "script": "男：你看看你，怎么又算错了，你总是这样，就不能认真点儿吗？\n女：对不起。\n问：根据对话，可以知道女怎么样？"
+            },
+            {
+                "num": 20,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 不行",
+                    "B. 可以帮忙照相",
+                    "C. 照相机有问题",
+                    "D. 照相机没有问题"
+                ],
+                "correct": "B",
+                "script": "女：先生，你可以给我们照张相吗？\n男：没问题。\n问：男意思是什么？"
+            },
+            {
+                "num": 21,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 去看电影",
+                    "B. 去电影院",
+                    "C. 去图书馆",
+                    "D. 去教室"
+                ],
+                "correct": "C",
+                "script": "男：你今晚和我一起去电影院看电影好吗？\n女：不行，有人在图书馆等我呢。\n问：女准备做什么？"
+            },
+            {
+                "num": 22,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 坐地铁",
+                    "B. 坐朋友的车",
+                    "C. 坐公交车",
+                    "D. 坐出租车"
+                ],
+                "correct": "B",
+                "script": "男：我们明天怎么去公园，是坐公交还是地铁？\n女：我的一个朋友明天没事，说可以开车送我们去。\n问：他们怎么去公园？"
+            },
+            {
+                "num": 23,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 男的发烧了",
+                    "B. 小李出国了",
+                    "C. 地址写错了",
+                    "D. 手机修好了"
+                ],
+                "correct": "B",
+                "script": "男：小李换号了吗？怎么手机总是打不通？\n女：他去国外出差了，月底才能回来，您有事儿就给他发电子邮件吧。\n问：根据对话，下列哪个正确？"
+            },
+            {
+                "num": 24,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 还杂志",
+                    "B. 买饮料",
+                    "C. 别抽烟",
+                    "D. 别迟到"
+                ],
+                "correct": "C",
+                "script": "女：先生，我们这里禁止抽烟。\n男：啊，对不起，我没注意到，我这就到外面去。\n问：女提醒男的是什么？"
+            },
+            {
+                "num": 25,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 同情男的",
+                    "B. 比赛很有趣",
+                    "C. 输赢不重要",
+                    "D. 时间来得及"
+                ],
+                "correct": "C",
+                "script": "男：只差一点儿就赢了，真替他感到可惜。\n女：他已经打出了自己最好的水平，无论结果怎么样，我们都应该为他高兴。\n问：女的是什么意思？"
+            }
+        ]
+    },
+    "DE_18": {
+        "title": "Bộ Đề 18",
+        "audio_id": "1oxh005THkJv34EkiugkVX-tfCz7bO_Iz",
+        "questions": [
+            {
+                "num": 11,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 不好看",
+                    "B. 有点儿贵",
+                    "C. 要手洗",
+                    "D. 只能干洗"
+                ],
+                "correct": "C",
+                "script": "女：这件毛衣不错，挺适合你的。\n男：缺点就是不能放在洗衣机里洗，要是你愿意手洗我就买。\n问：这件毛衣怎么样？"
+            },
+            {
+                "num": 12,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 能力不够",
+                    "B. 没有耐心",
+                    "C. 工作马虎",
+                    "D. 不相信人"
+                ],
+                "correct": "B",
+                "script": "男：小王这个人就是缺少耐心。\n女：其实他身上优点挺多的，工作认真，还很节约。\n问：小王有什么缺点？"
+            },
+            {
+                "num": 13,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 头疼",
+                    "B. 流泪",
+                    "C. 咳嗽",
+                    "D. 肚子疼"
+                ],
+                "correct": "C",
+                "script": "男：你怎么咳嗽了？是不是感冒了？\n女：可能是因为我还没适应这里的空气吧。\n问：女怎么了？"
+            },
+            {
+                "num": 14,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 酸的",
+                    "B. 甜的",
+                    "C. 辣的",
+                    "D. 咸的"
+                ],
+                "correct": "A",
+                "script": "男：这个酸菜鱼你怎么吃了一口就不吃了？\n女：我怕酸。没关系，别的菜不管甜的还是辣的我都可以吃。\n问：女不吃什么菜？"
+            },
+            {
+                "num": 15,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 开会",
+                    "B. 上课",
+                    "C. 洗澡",
+                    "D. 睡觉"
+                ],
+                "correct": "A",
+                "script": "男：下午给你打了好几次电话，你怎么没接？\n女：不好意思，下午有一个很重要的会议，我不方便接。\n问：女下午在做什么？"
+            },
+            {
+                "num": 16,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 借钱",
+                    "B. 购物",
+                    "C. 寄东西",
+                    "D. 准备材料"
+                ],
+                "correct": "C",
+                "script": "男：你这么忙，这个材料我去寄吧。\n女：那就麻烦你了，我先把钱给你吧。\n问：男想帮女做什么？"
+            },
+            {
+                "num": 17,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 吃完了",
+                    "B. 不吃辣",
+                    "C. 吃多了",
+                    "D. 有点儿贵"
+                ],
+                "correct": "C",
+                "script": "男：你怎么不吃鱼？是不是怕辣？\n女：不是，我前几天老吃鱼，吃得有点儿多了，想多吃点儿菜。\n问：女为什么不吃鱼？"
+            },
+            {
+                "num": 18,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 便宜",
+                    "B. 好喝",
+                    "C. 很近",
+                    "D. 认识人"
+                ],
+                "correct": "B",
+                "script": "女：那个咖啡馆的咖啡太贵了，你别去了。\n男：贵点儿没关系，味道好是最重要的。\n问：男为什么要去那个咖啡馆？"
+            },
+            {
+                "num": 19,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 工作太忙了",
+                    "B. 担心学不会",
+                    "C. 家里没有琴",
+                    "D. 怕影响邻居"
+                ],
+                "correct": "D",
+                "script": "男：你钢琴弹得不错，怎么平时不弹呢？\n女：弹过几次，邻居说太吵了。我就不好意思弹了。\n问：女为什么不弹钢琴？"
+            },
+            {
+                "num": 20,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 水平低",
+                    "B. 太远了",
+                    "C. 想轻松点儿",
+                    "D. 来不及准备"
+                ],
+                "correct": "C",
+                "script": "女：有人邀请你参加比赛，你为什么不接受呢？\n男：一准备比赛就又要紧张起来了，最近这段时间我想过过轻松的生活。\n问：男为什么不参加比赛？"
+            },
+            {
+                "num": 21,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 不被信任",
+                    "B. 工资太低",
+                    "C. 研究生",
+                    "D. 十分辛苦"
+                ],
+                "correct": "A",
+                "script": "男：那家公司工资高，离开了多可惜啊！\n女：是有点儿可惜，可是经理总是不信任我，我觉得跟这样的人一起工作心情不愉快。\n问：女为什么离开公司？"
+            },
+            {
+                "num": 22,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 很幽默",
+                    "B. 唱得好",
+                    "C. 有耐心",
+                    "D. 样子好"
+                ],
+                "correct": "A",
+                "script": "女：这个男演员一点儿也不帅，喜欢他的人却很多，真奇怪。\n男：一点儿也不奇怪，他虽然不帅，可是说话很幽滑，给大家带来了很多欢乐。\n, nhưng thực tế chuẩn phải là 幽默 )\n问：为什么人们喜欢这个演员？"
+            },
+            {
+                "num": 23,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 离得近",
+                    "B. 气氛好",
+                    "C. 是一种运动",
+                    "D. 上网不方便"
+                ],
+                "correct": "B",
+                "script": "男：在网上买书多省事儿啊，去书店要多花好多时间。\n女：可是我喜欢书店的气氛，在书店里看看感兴趣的书，我的心情都特别愉快。\n问：女为什么去书店买书？"
+            },
+            {
+                "num": 24,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 来早了",
+                    "B. 有人了",
+                    "C. 太贵了",
+                    "D. 清楚了"
+                ],
+                "correct": "B",
+                "script": "男：你好！请问这个座位有人吗？\n女：不好意思，坐这儿的人去卫生间了，一会儿还回来。\n问：女的是什么意思？"
+            },
+            {
+                "num": 25,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 自己的很好",
+                    "B. 不买这双鞋",
+                    "C. 女的买多了",
+                    "D. 不知道选什么"
+                ],
+                "correct": "B",
+                "script": "女：看这双鞋，今年特别流行这样的。\n男：流行的不一定好，适合自己的才是最好的。我觉得你穿这样的不合适。\n问：男的是什么意思？"
+            }
+        ]
+    },
+    "DE_19": {
+        "title": "Bộ Đề 19",
+        "audio_id": "1nIsPcA239XEHI0BTFkk2RpW3zjLyY3nM",
+        "questions": [
+            {
+                "num": 11,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 没说完",
+                    "B. 没意思",
+                    "C. 不会英语",
+                    "D. 不用汉语"
+                ],
+                "correct": "D",
+                "script": "男：这个词是什么意思？你能用汉语解释一下吗？\n女：恐怕我用汉语解释完以后，你更不明白了。我还是用英语说吧。\n问：女的是什么意思？"
+            },
+            {
+                "num": 12,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 拒绝",
+                    "B. 很好",
+                    "C. 有信心",
+                    "D. 考虑一下"
+                ],
+                "correct": "A",
+                "script": "女：你和我一起翻译这本书，怎么样？\n男：翻译科学方面的书，要十分准确，我的水平还不够。\n问：男是什么意思？"
+            },
+            {
+                "num": 13,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 鼓励儿子",
+                    "B. 祝贺儿子",
+                    "C. 批评儿子",
+                    "D. 感谢儿子"
+                ],
+                "correct": "A",
+                "script": "男：妈妈，我有点儿害怕，要是输了球怎么办？\n女：儿子，好好踢，妈妈相信你，你是个勇敢的人。\n问：根据对话，可以知道女在做什么？"
+            },
+            {
+                "num": 14,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 无聊",
+                    "B. 一般",
+                    "C. 值得看",
+                    "D. 看不懂"
+                ],
+                "correct": "C",
+                "script": "女：你觉得这部电影怎么样？\n男：每个人看完以后都有自己的感觉。我只能告诉你，你要是不去电影院看肯定会后悔的。\n问：男觉得电影怎么样？"
+            },
+            {
+                "num": 15,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 比赛",
+                    "B. 看球",
+                    "C. 说笑话",
+                    "D. 打电脑"
+                ],
+                "correct": "B",
+                "script": "男：这球打得真精彩！\n女：我都看了好几个小时了，也该让我看看我喜欢的节目了。\n问：男在干什么？"
+            },
+            {
+                "num": 16,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 讨论问题",
+                    "B. 买好礼物",
+                    "C. 下班回家",
+                    "D. 准备茶点"
+                ],
+                "correct": "D",
+                "script": "女：后天九点开会，我八点五十到可以吗？\n男：最好提前半个小时到，我们还得提前准备好茶水、点心呢。\n问：他们要提前做什么？"
+            },
+            {
+                "num": 17,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 想继续走",
+                    "B. 他很健康",
+                    "C. 他家很近",
+                    "D. 有点儿累"
+                ],
+                "correct": "A",
+                "script": "女：你看天突然这么黑，好像要下大雨了。我们别散步了，往回走吧。\n男：没关系，我带着伞呢。\n问：男主要是什么意思？"
+            },
+            {
+                "num": 18,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 写书",
+                    "B. 买东西",
+                    "C. 看朋友",
+                    "D. 打扫房子"
+                ],
+                "correct": "A",
+                "script": "男：听说你打算买海边的房子？\n女：你是听谁说的？我只是想去海边住一两个月，把我的书写完，买房子干什么？\n问：女打算做什么？"
+            },
+            {
+                "num": 19,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 都可以",
+                    "B. 很不错",
+                    "C. 不关心",
+                    "D. 不合适"
+                ],
+                "correct": "D",
+                "script": "女：我穿这条连衣裙怎么样？\n男：挺漂亮的，可是不够正式。\n问：男的是什么意思？"
+            },
+            {
+                "num": 20,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 等人",
+                    "B. 开车",
+                    "C. 爬楼梯",
+                    "D. 踢足球"
+                ],
+                "correct": "C",
+                "script": "男：电梯怎么坏了？累死我了，休息一下再爬吧。\n女：已经爬了六层了，还有三层就到了。\n问：他们最可能在做什么？"
+            },
+            {
+                "num": 21,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 产量少",
+                    "B. 是进口的",
+                    "C. 历史很长",
+                    "D. 质量最好"
+                ],
+                "correct": "A",
+                "script": "男：这个葡萄酒价格怎么这么高？\n女：因为产量很少。\n问：为什么这种酒很贵？"
+            },
+            {
+                "num": 22,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 没人关心",
+                    "B. 优秀的少",
+                    "C. 组织很乱",
+                    "D. 非常成功"
+                ],
+                "correct": "B",
+                "script": "女：听说这次招聘报名的人不少啊！\n男：来的人确实挺多的，可是其中优秀的只有两三个，其他的基本上不合格。\n问：这次招聘，情况怎么样？"
+            },
+            {
+                "num": 23,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 便宜",
+                    "B. 安全",
+                    "C. 服务好",
+                    "D. 时间合适"
+                ],
+                "correct": "A",
+                "script": "女：你为什么要买这个航空公司的机票？\n男：因为可以打七折。别的公司现在都是原价。\n问：男为什么买这个公司的机票？"
+            },
+            {
+                "num": 24,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 打电话问",
+                    "B. 少管点儿事",
+                    "C. 写写东西",
+                    "D. 用手机记事"
+                ],
+                "correct": "D",
+                "script": "女：我最近老爱忘事，这是不是跟年龄有关系？\n男：那是因为你事儿太多了，又不用记事本。你可以把重要的事都写在手机里，这样就不会忘记了。\n问：男有什么意见？"
+            },
+            {
+                "num": 25,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 看电影",
+                    "B. 买礼物",
+                    "C. 去饭馆吃",
+                    "D. 在家请客"
+                ],
+                "correct": "D",
+                "script": "男：明天是你的生日，我请你吃饭吧。\n女：明天我想请朋友来家里吃饭，我已经把菜都准备好了。\n问：女明天打算做什么？"
+            }
+        ]
+    },
+    "DE_20": {
+        "title": "Bộ Đề 20",
+        "audio_id": "19cUHi-Dsw4AcGrt-fiA5j9pFuAFxS-gV",
+        "questions": [
+            {
+                "num": 11,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 考试",
+                    "B. 打羽毛球",
+                    "C. 去大使馆",
+                    "D. 去朋友家"
+                ],
+                "correct": "C",
+                "script": "男：小刘，明天咱们去打羽毛球怎么样？\n女：明天正好有事，我跟朋友约好了明天要去趟大使馆。\n问：明天小刘要做什么？"
+            },
+            {
+                "num": 12,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 想",
+                    "B. 不想",
+                    "C. 过去了",
+                    "D. 考虑一下"
+                ],
+                "correct": "A",
+                "script": "女：春天了，天气逐渐暖和了，我们去公园看花吧。\n男：这个主意不错。\n问：男想去公园看花吗？"
+            },
+            {
+                "num": 13,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 好多了",
+                    "B. 完全好了",
+                    "C. 还很严重",
+                    "D. 更严重了"
+                ],
+                "correct": "A",
+                "script": "男：你感冒好了吗？\n女：差不多了，就是偶尔还会咳嗽。\n问：女感冒怎么样了？"
+            },
+            {
+                "num": 14,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 公司环境",
+                    "B. 同事关系",
+                    "C. 北方的气候",
+                    "D. 北方的交通"
+                ],
+                "correct": "C",
+                "script": "女：北方太干燥了，我觉得很不舒服。\n男：习惯了就好了，我刚来时跟你一样。\n问：女对什么不适应？"
+            },
+            {
+                "num": 15,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 会议内容",
+                    "B. 儿童健康",
+                    "C. 注意健康",
+                    "D. 内容怎么改"
+                ],
+                "correct": "A",
+                "script": "男：今天会议的内容是“注意健康”，对吗？\n女：您怎么忘了？已经改成“儿童健康”了。\n问：他们在谈什么？"
+            },
+            {
+                "num": 16,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 她病了",
+                    "B. 风不大",
+                    "C. 出汗好",
+                    "D. 要及时擦汗"
+                ],
+                "correct": "D",
+                "script": "女：现在风刮得这么大，出了汗要及时擦掉，小心感冒。\n男：没关系，我身体好，不会那么容易生病的。\n问：女的是什么意思？"
+            },
+            {
+                "num": 17,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 认真",
+                    "B. 写了好久",
+                    "C. 想起来了",
+                    "D. 忽然忘了"
+                ],
+                "correct": "C",
+                "script": "男：你不是说你都忘了吗？怎么还写得这么清楚？\n女：连我自己也不敢相信，一拿起笔忽然就想起来了。\n问：女为什么写得那么清楚？"
+            },
+            {
+                "num": 18,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 游泳",
+                    "B. 爬山",
+                    "C. 看书",
+                    "D. 旅行"
+                ],
+                "correct": "C",
+                "script": "女：听说小刘特别喜欢爬山和游泳，是真的吗？\n男：爬山？游泳？没错，不过他喜欢在书本里游，在书本上爬。\n问：小刘喜欢做什么？"
+            },
+            {
+                "num": 19,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 超市",
+                    "B. 机场",
+                    "C. 地铁站",
+                    "D. 火车上"
+                ],
+                "correct": "A",
+                "script": "男：欢迎光临，请您在购物时照顾好自己的小孩，避免走失。\n女：谢谢，我会一直拉住孩子的手。\n问：他们可能在哪儿？"
+            },
+            {
+                "num": 20,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 奇怪",
+                    "B. 吃惊",
+                    "C. 怀疑",
+                    "D. 生气"
+                ],
+                "correct": "D",
+                "script": "女：要想跟我们公司合作，条件就是这样的。\n男：你们也太不像话了，哪有这样谈生意的。\n问：根据对话，可以知道男说话时怎么样？"
+            },
+            {
+                "num": 21,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 律师",
+                    "B. 医生",
+                    "C. 教师",
+                    "D. 职员"
+                ],
+                "correct": "C",
+                "script": "男：你们寒假放一个月呢，真羡慕你们！\n女：我们这个职业就有这点儿好处，但平时得为学生操心啊。\n问：女可能是做什么的？"
+            },
+            {
+                "num": 22,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 邻居",
+                    "B. 同事",
+                    "C. 夫妻",
+                    "D. 母子"
+                ],
+                "correct": "C",
+                "script": "女：听邻居说今天超市鱼很便宜，儿子喜欢吃，你去买两条吧！\n男：没问题，下午我下了班就去买。\n问：他们是什么关系？"
+            },
+            {
+                "num": 23,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 她请客",
+                    "B. 她不想吃",
+                    "C. 菜不好吃",
+                    "D. 她有约会了"
+                ],
+                "correct": "B",
+                "script": "男：这家饭馆儿的菜特别好吃，今天我请客，咱们好好儿吃一顿。\n女：这儿的菜是做得不错，但是我今天有点儿不舒服，还是改天吧。\n问：女的是什么意思？"
+            },
+            {
+                "num": 24,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 接电话",
+                    "B. 接她爸爸",
+                    "C. 记电话号码",
+                    "D. 联系她爸爸"
+                ],
+                "correct": "D",
+                "script": "女：我昨天给爸爸打了一天电话，他都没接。\n男：你是不是记错电话号码了？\n问：从对话中我们知道女做什么了？"
+            },
+            {
+                "num": 25,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 学习方法",
+                    "B. 学习环境",
+                    "C. 学习效果",
+                    "D. 学习条件"
+                ],
+                "correct": "C",
+                "script": "男：我总感觉上午学习比下午好，我一个上午能背好几篇课文，下午却不行。\n男：就是，我也这么认为。\n问：他们在谈论什么？"
+            }
+        ]
+    },
+    "DE_21": {
+        "title": "Bộ Đề 21",
+        "audio_id": "1HYXMBcvonZuk0dmZhJl0PQjg_RRug7Tk",
+        "questions": [
+            {
+                "num": 26,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 空调",
+                    "B. 冰箱",
+                    "C. 洗衣机",
+                    "D. 电脑"
+                ],
+                "correct": "A",
+                "script": "女：咱们家这个空调太旧了。\n男：是，制冷效果不太好了。\n女：那咱们星期六去商店看看，买一台新的？\n男：行。\n问：他们打算买什么？"
+            },
+            {
+                "num": 27,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 六月一号",
+                    "B. 七月一号",
+                    "C. 七月九号",
+                    "D. 八月九号"
+                ],
+                "correct": "D",
+                "script": "男：你工作找得怎么样了？\n女：挺顺利的，已经定下来了。\n男：太好了！祝贺你！什么时候正式上班？\n女：七月九号。\n问：关于女，可以知道什么？"
+            },
+            {
+                "num": 28,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 那儿太热了",
+                    "B. 那儿风太大",
+                    "C. 那儿不漂亮",
+                    "D. 那儿太冷了"
+                ],
+                "correct": "D",
+                "script": "女：快放寒假了，你有什么安排？\n男：我打算去东北玩儿。\n女：东三省？那儿冬天多冷啊！你怎么会想去那儿玩儿？\n男：冷是冷，可是那儿冬天也很漂亮。\n问：女觉得东北怎么样？"
+            },
+            {
+                "num": 29,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 售货员送的",
+                    "B. 以前邻居一个阿姨送的",
+                    "C. 爸爸送的",
+                    "D. 朋友送的"
+                ],
+                "correct": "B",
+                "script": "男：这个盒子好像坏了。\n女：是吗？你小心点儿，先放桌上吧。\n男：这里面是什么啊？\n女：是几个杯子，是以前邻居一个阿姨送我的。\n问：杯子是谁送的？"
+            }
+        ]
+    },
+    "DE_22": {
+        "title": "Bộ Đề 22",
+        "audio_id": "1wSZnrPeNBrlq4yNTKg7V4-1TaRrtiuPo",
+        "questions": [
+            {
+                "num": 11,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 选项A",
+                    "B. 选项B",
+                    "C. 选项C",
+                    "D. 选项D"
+                ],
+                "correct": "A",
+                "script": "男：这是一段听力文本。\n女：是的，这是一段听力文本。\n问：关于他们，可以知道什么？"
+            },
+            {
+                "num": 12,
+                "question_text": "根据听力内容选择正确答案：",
+                "options": [
+                    "A. 选项A",
+                    "B. 选项B",
+                    "C. 选项C",
+                    "D. 选项D"
+                ],
+                "correct": "B",
+                "script": "男：这是第二段听力文本。\n女：是的。\n问：男的是什么意思？"
+            }
+        ]
+    }
+}
+
+# TẠO CÁC TABS ĐỀ THI
+tab_keys = list(exam_data.keys())
+tab_titles = [exam_data[k]["title"] for k in tab_keys]
+
+tabs = st.tabs(tab_titles)
+
+for idx, tab_key in enumerate(tab_keys):
+    with tabs[idx]:
+        data = exam_data[tab_key]
         
-    questions = []
-    for item in sampled:
-        mode = random.choice(['p', 'm'])
-        if mode == 'p':
-            q_text = f"Phiên âm của từ '{item['h']}' là gì?"
-            correct = item['p']
-            others = list(set([v['p'] for v in vocab_db if v['p'] != correct]))
-        else:
-            q_text = f"Nghĩa của từ '{item['h']}' là gì?"
-            correct = item['m']
-            others = list(set([v['m'] for v in vocab_db if v['m'] != correct]))
+        # Trình phát Audio và Nút liên kết Drive dự phòng
+        stream_url = f"https://docs.google.com/uc?export=download&id={data['audio_id']}"
+        st.markdown(f"""
+            <div class="audio-wrapper">
+                <h3>🎵 听力音频播放器 / TRÌNH PHÁT BÀI NGHE - {data['title'].upper()}</h3>
+                <p style="font-size: 13px; color: #334155 !important; margin: 5px 0 0 0;">
+                    💡 <b>LƯU Ý QUAN TRỌNG:</b> Nếu trình phát bên dưới bị xoay vòng hoặc báo lỗi không phát được (do trình duyệt của bạn đang chặn Cookie/Quyền riêng tư), bạn hãy nhấn nút <b>"Mở file nghe dự phòng"</b> bên cạnh để nghe trực tiếp cực kỳ mượt mà từ Google Drive nhé!
+                </p>
+            </div>
+        """, unsafe_allow_html=True)
+        
+        # Sắp xếp trình phát và nút dự phòng song song
+        col_audio, col_link = st.columns([3, 2])
+        with col_audio:
+            st.audio(stream_url, format="audio/mpeg")
+        with col_link:
+            st.markdown("<div style='margin-top: 6px;'></div>", unsafe_allow_html=True)
+            st.link_button(
+                "🔗 Mở file nghe dự phòng (Google Drive)",
+                f"https://drive.google.com/file/d/{data['audio_id']}/view?usp=sharing",
+                use_container_width=True
+            )
+        st.write("---")
+        
+        # State lưu đáp án đã chọn của tab hiện tại
+        if f"answers_{tab_key}" not in st.session_state:
+            st.session_state[f"answers_{tab_key}"] = {}
+        if f"submitted_{tab_key}" not in st.session_state:
+            st.session_state[f"submitted_{tab_key}"] = False
             
-        # Lấy 3 đáp án sai ngẫu nhiên
-        distractors = random.sample(others, 3)
-        options = distractors + [correct]
-        random.shuffle(options)
+        submitted = st.session_state[f"submitted_{tab_key}"]
         
-        questions.append({
-            "q": q_text, 
-            "options": options, 
-            "a": correct, 
-            "word": item['h'],
-            "full_info": f"{item['h']} [{item['p']}]: {item['m']}"
-        })
+        # Form câu hỏi
+        user_answers = {}
+        for q in data["questions"]:
+            st.markdown(f'<span class="q-badge">第 {q["num"]} 题</span>', unsafe_allow_html=True)
+            st.write(f"**{q['question_text']}**")
+            
+            # Format các options cho radio button
+            options = q["options"]
+            
+            # Lấy đáp án cũ đã chọn nếu có
+            default_val = None
+            if q["num"] in st.session_state[f"answers_{tab_key}"]:
+                saved_ans = st.session_state[f"answers_{tab_key}"][q["num"]]
+                for i, opt in enumerate(options):
+                    if opt.startswith(saved_ans):
+                        default_val = i
+                        break
+                        
+            # Tạo Widget Radio Button
+            selected_option = st.radio(
+                label=f"q_{tab_key}_{q['num']}",
+                options=options,
+                index=default_val if default_val is not None else 0,
+                key=f"widget_{tab_key}_{q['num']}",
+                disabled=submitted,
+                label_visibility="collapsed"
+            )
+            
+            # Lưu câu trả lời của người dùng (chỉ lấy ký tự đầu A, B, C, D)
+            user_char = selected_option[0] if selected_option else None
+            user_answers[q["num"]] = user_char
+            
+            # Hiển thị giải thích / kết quả và Script nếu đã nộp bài
+            if submitted:
+                correct_char = q["correct"]
+                if user_char == correct_char:
+                    st.success("✓ 回答正确 (Đúng rồi!)")
+                else:
+                    st.error(f"✗ 回答错误。正确答案是：{correct_char}")
+                    
+                    # Hiện Script hội thoại cho câu trả lời sai
+                    with st.expander("🔍 查看听力文本 (Xem Script)"):
+                        st.markdown(f"**听力文本 (Transcript):**")
+                        st.code(q["script"], language="markdown")
+            st.write("")
+            
+        st.write("---")
         
-    st.session_state.master_questions = questions
-    st.session_state.current_idx = 0
-    st.session_state.score = 0
-    st.session_state.user_answers = {}
-    st.session_state.quiz_done = False
-    st.session_state.result_gif = None
-
-# --- 4. HIỂN THỊ CÂU HỎI ---
-if not st.session_state.quiz_done:
-    st.title("🎓 K10 ÔN TẬP 300 TỪ VỰNG HSK3")
-    
-    total_unique = len(vocab_db)
-    st.info(f"Đã luyện tập: {len(set(st.session_state.all_used_words))} / {total_unique} từ. Các câu hỏi sẽ không trùng lại!")
-    
-    idx = st.session_state.current_idx
-    q = st.session_state.master_questions[idx]
-    
-    st.progress(idx / 20)
-    st.subheader(f"Câu {idx+1}/20")
-    st.markdown(f"### {q['q']}")
-    
-    # Giữ lại lựa chọn cũ nếu học viên quay lại câu này
-    saved_ans = st.session_state.user_answers.get(idx)
-    default_idx = q['options'].index(saved_ans) if saved_ans in q['options'] else 0
-        
-    choice = st.radio("Chọn đáp án của bạn:", q['options'], index=default_idx, key=f"radio_{idx}")
-    
-    # Thiết kế 2 cột cho 2 nút Quay lại và Tiếp theo
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        if idx > 0:
-            if st.button("⬅️ Quay lại câu trước"):
-                st.session_state.user_answers[idx] = choice # Lưu tạm đáp án
-                st.session_state.current_idx -= 1
-                st.rerun()
-                
-    with col2:
-        if idx < 19:
-            if st.button("Câu tiếp theo ➡️"):
-                st.session_state.user_answers[idx] = choice # Lưu đáp án
-                st.session_state.current_idx += 1
-                st.rerun()
+        # Nút nộp bài riêng cho từng Tab
+        if not submitted:
+            if st.button(f"Nộp Bài {data['title']}", key=f"btn_submit_{tab_key}"):
+                if not student_name.strip():
+                    st.warning("⚠️ 请先输入您的姓名！/ Vui lòng nhập họ tên ở khung phía trên trước khi nộp bài.")
+                else:
+                    st.session_state[f"answers_{tab_key}"] = user_answers
+                    st.session_state[f"submitted_{tab_key}"] = True
+                    st.rerun()
         else:
-            if st.button("Nộp bài 🏁"):
-                st.session_state.user_answers[idx] = choice
-                
-                # Tính điểm toàn bộ bài
-                final_score = 0
-                for i, mq in enumerate(st.session_state.master_questions):
-                    if st.session_state.user_answers.get(i) == mq['a']:
-                        final_score += 1
-                
-                st.session_state.score = final_score
-                st.session_state.quiz_done = True
-                
-                # Random chọn 1 ảnh GIF để hiện chúc mừng
-                st.session_state.result_gif = random.choice(gif_urls)
-                
-                st.rerun()
+            # Chấm điểm và hiển thị kết quả
+            correct_count = 0
+            total_qs = len(data["questions"])
+            saved_answers = st.session_state[f"answers_{tab_key}"]
+            
+            for q in data["questions"]:
+                if saved_answers.get(q["num"]) == q["correct"]:
+                    correct_count += 1
+                    
+            # Trình bày đúng mẫu text yêu cầu
+            result_text = f"""
+- Chúc mừng bạn đã hoàn thành bộ đề {data['title']}!
 
-else:
-    st.balloons()
-    st.header("HOÀN THÀNH BÀI ÔN TẬP! 🎉")
-    
-    # Hiện thị chiếc GIF chúc mừng (Blind Box)
-    if st.session_state.result_gif:
-        st.image(st.session_state.result_gif, width=350)
-    
-    st.metric("Điểm số của bạn", f"{st.session_state.score}/20")
-    
-    if st.button("Làm tiếp 20 từ khác (Không trùng từ cũ) 🔄"):
-        del st.session_state.master_questions
-        del st.session_state.current_idx
-        del st.session_state.score
-        del st.session_state.user_answers
-        del st.session_state.quiz_done
-        del st.session_state.result_gif
-        st.rerun()
+Điểm số của bạn là: {correct_count}/{total_qs}
 
-    st.divider()
-    st.subheader("Xem lại bài làm lần này:")
-    for i, q in enumerate(st.session_state.master_questions):
-        user_ans = st.session_state.user_answers.get(i, "Chưa chọn")
-        is_correct = user_ans == q['a']
-        icon = "✅" if is_correct else "❌"
-        
-        with st.expander(f"{icon} Câu {i+1}: {q['word']}"):
-            st.write(f"**Câu hỏi:** {q['q']}")
-            st.write(f"**Bạn chọn:** {user_ans}")
-            st.write(f"**Đáp án đúng:** {q['a']}")
-            st.info(f"💡 Kiến thức: {q['full_info']}")
+Nhớ nghe lại chỗ mình làm chưa đúng nhaaa~
+"""
+            st.info(result_text)
+            
+            # GỬI ĐIỂM VỀ GOOGLE SHEETS QUA WEBHOOK (Apps Script)
+            if WEBHOOK_URL and "xxxxxxxxx" not in WEBHOOK_URL:
+                with st.spinner("⏳ Đang gửi kết quả bài làm về Google Sheets..."):
+                    try:
+                        payload = {
+                            "timestamp": datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
+                            "studentName": student_name,
+                            "examCode": data["title"],
+                            "score": f"{correct_count}/{total_qs}"
+                        }
+                        response = requests.post(WEBHOOK_URL, json=payload, timeout=10)
+                        if response.status_code == 200:
+                            st.success("✅ Điểm số đã được đồng bộ tự động lên Google Sheets của cô thành công!")
+                        else:
+                            st.warning(f"⚠️ Không thể gửi điểm tự động lên Sheet (Lỗi mạng HTTP: {response.status_code}). Học viên hãy chụp ảnh màn hình kết quả này gửi riêng cho cô nhé!")
+                    except Exception as e:
+                        st.error(f"❌ Đồng bộ điểm thất bại do lỗi kết nối: {str(e)}. Học viên hãy chụp ảnh màn hình kết quả điểm số này gửi cho cô nhé!")
+
+# CĂN GIỮA DÒNG CHỮ Ở FOOTER
+st.markdown("""
+    <div class="footer">
+        黄宝玉老师
+    </div>
+""", unsafe_allow_html=True)
